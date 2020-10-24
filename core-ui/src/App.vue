@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <home/>
+    <index-page/>
   </div>
 </template>
 
 <script>
-  import Home from '@/views/Home'
+  import IndexPage from '@/views/IndexPage'
   export default {
     name: 'app',
     data() {
@@ -17,7 +17,7 @@
 
     },
     components: {
-      Home
+      IndexPage
       
     }
   }

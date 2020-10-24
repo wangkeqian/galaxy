@@ -6,9 +6,9 @@
       </el-header>
     </el-container>
     <el-container>
-      <left-menu/>
-      <el-main style="background-color: #288b49;">
-        <h3>你你你你</h3>
+      <left-menu :currentStation.sync='currentStation'/>
+      <el-main>
+        <router-view ></router-view>
       </el-main>
     </el-container> 
   </div>
@@ -17,11 +17,12 @@
 <script>
   import LeftMenu from '@/components/common/leftMenu/LeftMenu'
   import HeaderBar from '@/components/common/header/HeaderBar'
+  import EditNote from '@/views/editNote/EditNote'
   export default {
-    name: 'Home',
+    name: 'IndexPage',
     data() {
       return {
-        
+        currentStation: 'editNote'
       }
     },
     methods: {
@@ -29,8 +30,14 @@
     },
     components: {
       LeftMenu,
-      HeaderBar
-    }
+      HeaderBar,
+      EditNote
+    },
+    watch: {
+      currentStation(newVal){
+        this.$router.push(this.currentStation)
+      }
+    },
   }
 </script>
 

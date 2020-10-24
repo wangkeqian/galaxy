@@ -5,15 +5,21 @@
         <el-radio-button :label="false">展开</el-radio-button>
         <el-radio-button :label="true">收起</el-radio-button>
       </el-radio-group>
-      <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+      <el-menu default-active="1-4-1" class="el-menu-vertical-demo" 
+               @open="handleOpen" @close="handleClose" :collapse="isCollapse"
+               router @select='selectHandle'>
+        <el-menu-item index="home">
+          <i class="el-icon-s-home"></i>
+          <span slot="title">首页</span>
+        </el-menu-item>
         <el-submenu index="1">
           <template slot="title">
             <i class="el-icon-location"></i>
             <span slot="title">博客</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="1-1">写博客</el-menu-item>
-            <el-menu-item index="1-2">博客列表</el-menu-item>
+            <el-menu-item index="editNote" >写博客</el-menu-item>
+            <el-menu-item index="noteList">博客列表</el-menu-item>
           </el-menu-item-group>
           <el-submenu index="1-4">
             <span slot="title">文章分析</span>
@@ -40,6 +46,12 @@
 <script>
   export default {
     name: 'LeftMenu',
+    props: {
+      currentStation: {
+        type: String,
+        required: true
+      }
+    },
     data() {
       return {
         isCollapse: true
@@ -51,8 +63,13 @@
       },
       handleClose(key, keyPath) {
         console.log(key, keyPath);
+      },
+      selectHandle(key, keyPath){
+        this.$emit('update:currentStation', key)
+        
       }
     },
+
     components: {}
   }
 </script>

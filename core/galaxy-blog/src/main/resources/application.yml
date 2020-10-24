@@ -1,0 +1,60 @@
+server:
+  port: 8090
+spring:
+  redis:
+    database: 0
+    host: redis
+    port: 6379
+    timeout: 1000
+    password: 123456
+    jedis:
+      pool:
+        max-wait: -1
+        max-active: 22
+        min-idle: 0
+  datasource:
+    username: root
+    password: WKQ!123!wkq
+    url: jdbc:mysql://mysql:3306/galaxy?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      select-strategy: not_empty
+
+github:
+  client:
+    id: Iv1.867c6edd26016e9e
+    secret: a245010f946518828d2fcbbfaa0afee277706434
+    redirect_url: http://localhost:8080/callback
+    address: localhost
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+  #quartz相关配置
+  quartz:
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: clusteredScheduler #调度器实例名称
+            instanceId: AUTO #调度器实例编号自动生成
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX #持久化方式配置
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate #持久化方式配置数据驱动，MySQL数据库
+            tablePrefix: qrtz_ #quartz相关数据表前缀名
+            isClustered: true #开启分布式部署
+            clusterCheckinInterval: 10000 #分布式节点有效性检查时间间隔，单位：毫秒
+            useProperties: false #配置是否使用
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool #线程池实现类
+            threadCount: 10 #执行最大并发线程数量
+            threadPriority: 5 #线程优先级
+            threadsInheritContextClassLoaderOfInitializingThread: true #配置是否启动自动加载数据库内的定时任务，默认true
+    job-store-type: jdbc
