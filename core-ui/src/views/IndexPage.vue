@@ -17,7 +17,7 @@
 <script>
   import LeftMenu from '@/components/common/leftMenu/LeftMenu'
   import HeaderBar from '@/components/common/header/HeaderBar'
-  import EditNote from '@/views/editNote/EditNote'
+  import EditNote from '@/views/note/EditNote'
   export default {
     name: 'IndexPage',
     data() {

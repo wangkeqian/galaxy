@@ -13,7 +13,7 @@
           </el-input>
         </el-col>
         <el-col :span="3">
-          <el-button style="float: right;" type="primary" @click='submitNote' :loading="false">提交</el-button>
+          <el-button style="float: right;" type="primary" @click='submitNote' :loading="isLoading">提交</el-button>
         </el-col>
       </el-row>
       <el-row style="margin: 10px 0 10px 0;"> 
@@ -59,6 +59,7 @@
           tag: 'Java,Html,Python',
           content: ''
         },
+        isLoading: false,
         dynamicTags: [],
         inputVisible: false,
         inputValue: '',
@@ -89,13 +90,24 @@
       },
       //提交
       submitNote(){
+        this.isLoading = true
         this.article.content = this.content
         this.addNote(this.article)
       },
       addNote(article){
         addNote(article).then(res =>{
-          console.log(res);
-          
+          if(res.status == 200){
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            });
+            setTimeout(() =>{
+              this.$router.push('/index/noteList')
+            },500)
+          }else{
+            this.isLoading = false
+            this.$message.error('提交错误,请检查服务器');
+          }
         })
       }
     },

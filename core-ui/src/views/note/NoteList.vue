@@ -41,9 +41,9 @@
       fixed="right"
       label="操作">
   <template slot-scope="scope">
-      <el-button style="padding: 3px" size="mini">编辑</el-button>
-      <el-button style="padding: 3px" size="mini" type="primary" @click=showNote(scope.row)>查看</el-button>
-      <el-button style="padding: 3px" size="mini" type="danger">删除</el-button>
+    <el-button style="padding: 3px" size="mini" type="primary" @click=showNote(scope.row)>查看</el-button>
+    <el-button style="padding: 3px" size="mini">编辑</el-button>
+    <el-button style="padding: 3px" size="mini" type="danger">删除</el-button>
   </template>
 </el-table-column>
     </el-table>
@@ -68,7 +68,11 @@
     },
     methods: {
       showNote(data){
-        console.log(data);
+        const routeUrl = this.$router.resolve({
+          path: '/note',
+          query: {id: data.id}
+        })
+        window.open(routeUrl.href, '_blank')
       },
       findNote(){
         const param = new Object
@@ -101,4 +105,5 @@
 </script>
 
 <style scoped>
+  
 </style>

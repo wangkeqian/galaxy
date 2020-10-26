@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <index-page/>
+    <router-view/>
   </div>
 </template>
 
@@ -13,14 +13,13 @@
 
       }
     },
-    methods: {
-
-    },
-    components: {
-      IndexPage
-      
-    }
+    methods: {},
+    components: {}
   }
 </script>
 <style>
+  html,body,#app{
+ 		height: 100%;
+ 		width: 100%;
+	}
 </style>

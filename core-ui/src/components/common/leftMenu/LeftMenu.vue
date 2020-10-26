@@ -8,7 +8,7 @@
       <el-menu default-active="1-4-1" class="el-menu-vertical-demo" 
                @open="handleOpen" @close="handleClose" :collapse="isCollapse"
                router @select='selectHandle'>
-        <el-menu-item index="home">
+        <el-menu-item index="/index/home">
           <i class="el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
@@ -18,8 +18,8 @@
             <span slot="title">博客</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="editNote" >写博客</el-menu-item>
-            <el-menu-item index="noteList">博客列表</el-menu-item>
+            <el-menu-item index="/index/editNote" >写博客</el-menu-item>
+            <el-menu-item index="/index/noteList">博客管理</el-menu-item>
           </el-menu-item-group>
           <el-submenu index="1-4">
             <span slot="title">文章分析</span>

@@ -21,7 +21,7 @@ public class ArticleEditApi {
     @PostMapping("/add")
     public HttpResultResp addArticle(@RequestBody Article article){
         articleService.insert(article);
-        return HttpResultResp.ok();
+        return HttpResultResp.ok(article.getId());
     }
 
 }

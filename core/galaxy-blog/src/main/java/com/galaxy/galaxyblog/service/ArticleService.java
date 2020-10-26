@@ -3,8 +3,6 @@ package com.galaxy.galaxyblog.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
-import io.netty.util.internal.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,8 +25,9 @@ public class ArticleService {
         return articleMapper.selectList(null);
     }
 
-    public void insert(Article article) {
-        articleMapper.insert(article);
+    public int insert(Article article) {
+        int insert = articleMapper.insert(article);
+        return insert;
     }
 
     public Article findById(BigInteger id) {
@@ -36,6 +35,6 @@ public class ArticleService {
     }
 
     public List<Article> findByParams(Article article) {
-        return articleMapper.selectList(new QueryWrapper<>(article));
+        return articleMapper.selectList(new QueryWrapper<>(article).orderByDesc("gmt_create"));
     }
 }

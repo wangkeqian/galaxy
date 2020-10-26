@@ -1,9 +1,10 @@
 <template>
   <div class="mavonEditordev">
-    <mavon-editor class="mavonEditor" v-model="returnVal" 
+    <mavon-editor :class="{mavonEditor:toolbarsFlag}" v-model="returnVal" 
                   :toolbars='toolbars'
                   :toolbarsBackground='toolbarsBackground'
                   :subfield=subfield
+                  :toolbarsFlag='toolbarsFlag'
                   defaultOpen="preview"/>
   </div>
 </template>
@@ -13,6 +14,12 @@
     name: 'MarkdownPlugin',
     props: {
       subfield: Boolean,
+      toolbarsFlag: {
+        type: Boolean,
+        default(){
+          return true
+        }
+      },
       article: {
         type: Object
       },
@@ -60,7 +67,14 @@
       }
     },
     methods: {},
-    components: {}
+    components: {},
+    watch: {
+      article(newVal){
+        console.log(newVal.content);
+        
+        this.returnVal = newVal.content
+      }
+    },
   }
 </script>
 

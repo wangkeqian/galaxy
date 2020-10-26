@@ -6,28 +6,35 @@ const EditNote = () => import('@/views/note/EditNote')
 const Home     = () => import('@/views/home/Home')
 const ViewNote = () => import('@/views/note/ViewNote')
 const NoteList = () => import('@/views/note/NoteList')
+const IndexPage= () => import('@/views/IndexPage')
 
 const routes = [
   {
     path: '',
-    component: Home
+    redirect: '/index'
   },
   {
-    path: '/home',
-    component: Home
+    path: '/index',
+    component: IndexPage,
+    children: [
+      {
+        path: 'home',
+        component: Home
+      },
+      {
+        path: 'editNote',
+        component: EditNote
+      },
+      {
+        path: 'noteList',
+        component: NoteList
+      }
+    ]
   },
   {
-    path: '/editNote',
-    component: EditNote
-  },
-  {
-    path: '/viewNote',
+    path: '/note',
     component: ViewNote
   },
-  {
-    path: '/noteList',
-    component: NoteList
-  }
 ]
 
 const router = new VueRouter({
