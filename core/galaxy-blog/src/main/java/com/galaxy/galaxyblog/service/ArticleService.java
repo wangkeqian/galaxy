@@ -3,6 +3,8 @@ package com.galaxy.galaxyblog.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -34,7 +36,10 @@ public class ArticleService {
         return articleMapper.selectById(id);
     }
 
-    public List<Article> findByParams(Article article) {
-        return articleMapper.selectList(new QueryWrapper<>(article).orderByDesc("gmt_create"));
+    public PageInfo<Article> findByParams(Article article, int page, int size) {
+        PageHelper.startPage(page,size);
+        List<Article> articles = articleMapper.searchArticlePages(article);
+        PageInfo<Article> pageInfo = new PageInfo<>(articles);
+        return pageInfo;
     }
 }

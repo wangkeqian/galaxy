@@ -7,11 +7,14 @@ export function addNote(article){
     data: article
   })
 }
-export function findNote(article){
+export function findNote(article,page){
+  article = decodeURI(article)
   return request({
     method: 'get',
-    url: '/article/find',
-    params: article
+    url: '/article/find?'+article+'&',
+    params: {
+      page
+    }
   })
 }
 export function findNoteById(id){

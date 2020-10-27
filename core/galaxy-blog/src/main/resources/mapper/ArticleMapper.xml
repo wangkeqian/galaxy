@@ -15,4 +15,13 @@
     <sql id="Base_Column_List" >
     id, eid, asDate, beforeSalary, afterSalary, reason, remark
     </sql>
+
+    <select id="searchArticlePages" resultType="com.galaxy.galaxyblog.model.Article">
+        select id, title, subtitle, content, gmt_create, gmt_modified, creator, updator, tag from article
+        <where>
+            <if test="params.title != null">
+                and title like concat(#{params.title},'%')
+            </if>
+        </where>
+    </select>
 </mapper>

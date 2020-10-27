@@ -4,6 +4,8 @@ import com.galaxy.galaxyblog.common.HttpResultResp;
 import com.galaxy.galaxyblog.model.Article;
 import com.galaxy.galaxyblog.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,8 +31,13 @@ public class ArticleViewApi {
     }
 
     @GetMapping("/article/find")
-    public HttpResultResp searchArticleByParams(Article article){
-        return HttpResultResp.ok(articleService.findByParams(article));
+    public HttpResultResp searchArticleByParams(Article Args,
+                                                int page,
+                                                @RequestParam(
+                                                        name = "size",
+                                                        required = false,
+                                                        defaultValue = "10") int size){
+        return HttpResultResp.ok(articleService.findByParams(Args,page,size));
     }
 
     @GetMapping("/article/hr")

@@ -2,7 +2,7 @@
   <div>
     <div style="display: flex;justify-content: space-between">
       <div>
-          <el-input placeholder="请输入员工名进行搜索，可以直接回车搜索..." prefix-icon="el-icon-search"
+          <el-input :placeholder="getPlaceholder" prefix-icon="el-icon-search"
                     clearable
                     @clear="search"
                     style="width: 350px;margin-right: 10px" v-model="keyword"
@@ -143,7 +143,8 @@
       joblevels: Array,
       politicsstatus: Array,
       positions: Array,
-      editData: Object
+      editData: Object,
+      placeholder:String
     },
     data() {
       return {
@@ -180,13 +181,9 @@
         this.search()
       },
       search(){
-        this.searchEmployeeec()
-      },
-      searchEmployeeec(){       
-        let params = new Object
-        params['employeeName'] = this.keyword
-        this.$emit('searchEmployeeec',params)
-        
+
+        this.$emit('search',this.keyword)
+
       },
       searvhViewHandleNodeClick(){
 
@@ -203,7 +200,9 @@
       }
     },
     computed: {
-
+      getPlaceholder(){
+        return this.placeholder
+      }
     },
     components: {
       
@@ -211,9 +210,6 @@
     },
     watch: {
       'editData':function(newVal){
-        console.log('editdataSearchBar');
-        console.log(newVal);
-        
         this.dialogVisible = true
       }
     },
