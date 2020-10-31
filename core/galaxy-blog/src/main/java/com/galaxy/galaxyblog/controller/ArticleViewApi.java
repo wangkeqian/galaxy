@@ -32,7 +32,7 @@ public class ArticleViewApi {
 
     @GetMapping("/article/find")
     public HttpResultResp searchArticleByParams(Article Args,
-                                                int page,
+                                                Integer page,
                                                 @RequestParam(
                                                         name = "size",
                                                         required = false,

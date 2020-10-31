@@ -28,6 +28,10 @@
     methods: {
 
     },
+    created() {
+      console.log('这里是IndexPage');
+      
+    },
     components: {
       LeftMenu,
       HeaderBar,

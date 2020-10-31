@@ -36,7 +36,7 @@ public class ArticleService {
         return articleMapper.selectById(id);
     }
 
-    public PageInfo<Article> findByParams(Article article, int page, int size) {
+    public PageInfo<Article> findByParams(Article article, Integer page, int size) {
         PageHelper.startPage(page,size);
         List<Article> articles = articleMapper.searchArticlePages(article);
         PageInfo<Article> pageInfo = new PageInfo<>(articles);

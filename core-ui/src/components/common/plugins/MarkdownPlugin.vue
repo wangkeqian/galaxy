@@ -5,11 +5,15 @@
                   :toolbarsBackground='toolbarsBackground'
                   :subfield=subfield
                   :toolbarsFlag='toolbarsFlag'
-                  defaultOpen="preview"/>
+                  defaultOpen="preview"
+                  ref=md 
+                  @imgAdd="$imgAdd" 
+                  @imgDel="$imgDel"/>
   </div>
 </template>
 
 <script>
+  import { uploadFile ,delFile } from '@/network/note'
   export default {
     name: 'MarkdownPlugin',
     props: {
@@ -66,7 +70,34 @@
         }
       }
     },
-    methods: {},
+    methods: {
+      // 绑定@imgAdd event
+      $imgAdd(pos, $file){
+      // 第一步.将图片上传到服务器.
+        var formdata = new FormData();
+        formdata.append('file', $file);
+        uploadFile(formdata).then(res =>{
+          if(res.status == 200){
+            this.$refs.md.$img2Url(pos, res.obj.url);
+            this.$message({
+              message: '图片上传成功',
+              type: 'success'
+            });
+          }else{
+            this.$message.error('图片上传失败，请再次上传或者通知系统管理员');
+          }
+        
+        })
+      },
+      $imgDel(pos){
+        var formdata = new FormData();
+        formdata.append('filePath', pos[0]);
+        delFile(formdata).then(res =>{
+          console.log(res);
+          
+        })
+      }
+    },
     components: {},
     watch: {
       article(newVal){

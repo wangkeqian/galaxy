@@ -23,3 +23,18 @@ export function findNoteById(id){
     url: '/article/'+id
   })
 }
+export function uploadFile(file){
+  return request({
+    url: '/file/upload',
+    method: 'post',
+    data: file,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}
+export function delFile(filePath){
+  return request({
+    url: '/file/del',
+    method: 'delete',
+    data : filePath
+  })
+}

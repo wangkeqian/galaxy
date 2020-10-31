@@ -5,13 +5,17 @@
 </template>
 
 <script>
-  import IndexPage from '@/views/IndexPage'
+  
   export default {
     name: 'app',
     data() {
       return {
 
       }
+    },
+    created() {
+      console.log('这里是App.vue');
+      
     },
     methods: {},
     components: {}

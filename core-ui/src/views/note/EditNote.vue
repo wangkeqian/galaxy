@@ -40,7 +40,8 @@
     </div>
     <markdown-plugin ref="context" 
                      :subfield='subfield'
-                     :article='article'/>
+                     :article='article'
+                     />
   </div>
 </template>
 
@@ -108,6 +109,22 @@
             this.isLoading = false
             this.$message.error('提交错误,请检查服务器');
           }
+        })
+      },
+      // 绑定@imgAdd event
+      $imgAdd(pos, $file){
+        console.log('imgAdd');
+        
+      // 第一步.将图片上传到服务器.
+        var formdata = new FormData();
+        formdata.append('image', $file);
+        this.uploadFile(formdata)
+      },
+      uploadFile(file){
+        console.log('uploadFile');
+        uploadFile(file).then(res =>{
+          console.log('res='+res);
+          
         })
       }
     },
