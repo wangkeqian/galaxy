@@ -1,6 +1,8 @@
 package com.galaxy.galaxyblog.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
 import com.github.pagehelper.PageHelper;
@@ -27,9 +29,9 @@ public class ArticleService {
         return articleMapper.selectList(null);
     }
 
-    public int insert(Article article) {
-        int insert = articleMapper.insert(article);
-        return insert;
+    public int insertOrUpdate(Article article) {
+        if (article.getId() != null) return articleMapper.updateById(article);
+        return articleMapper.insert(article);
     }
 
     public Article findById(BigInteger id) {
@@ -41,5 +43,10 @@ public class ArticleService {
         List<Article> articles = articleMapper.searchArticlePages(article);
         PageInfo<Article> pageInfo = new PageInfo<>(articles);
         return pageInfo;
+    }
+
+    public int delById(Integer id) {
+        int i = articleMapper.deleteById(id);
+        return i;
     }
 }

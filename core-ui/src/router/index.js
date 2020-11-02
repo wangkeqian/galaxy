@@ -18,6 +18,10 @@ const routes = [
     component: IndexPage,
     children: [
       {
+        path: '',
+        redirect: 'home'
+      },
+      {
         path: 'home',
         component: Home
       },

@@ -20,8 +20,11 @@ public class ArticleEditApi {
 
     @PostMapping("/add")
     public HttpResultResp addArticle(@RequestBody Article article){
-        articleService.insert(article);
+        articleService.insertOrUpdate(article);
         return HttpResultResp.ok(article.getId());
     }
-
+    @DeleteMapping("/del/{id}")
+    public HttpResultResp delArticle(@PathVariable("id")Integer id){
+        return HttpResultResp.ok(articleService.delById(id));
+    }
 }

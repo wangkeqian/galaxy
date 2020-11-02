@@ -40,16 +40,4 @@ public class ArticleViewApi {
         return HttpResultResp.ok(articleService.findByParams(Args,page,size));
     }
 
-    @GetMapping("/article/hr")
-    public String test(){
-        Article article = new Article();
-        article.setTitle("第一篇文章");
-        article.setSubtitle("这是第一篇手动注入的文章");
-        article.setContent("Hello world");
-        article.setTag("Java，Python");
-        article.setCreator("wangkq");
-        article.setUpdator("wangkq");
-        articleService.insert(article);
-        return "ok";
-    }
 }

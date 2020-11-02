@@ -105,10 +105,10 @@
             setTimeout(() =>{
               this.$router.push('/index/noteList')
             },500)
-          }else{
-            this.isLoading = false
-            this.$message.error('提交错误,请检查服务器');
           }
+        }).catch(res =>{
+          this.isLoading = false
+          this.$message.error('提交错误,请检查服务器');
         })
       },
       // 绑定@imgAdd event
@@ -139,6 +139,10 @@
     },
     created() {
       this.dynamicTags = this.article.tag.split(",")
+      const data = this.$route.query.data
+      if(data != null){
+        this.article = data
+      }
     },
 
     components: {
