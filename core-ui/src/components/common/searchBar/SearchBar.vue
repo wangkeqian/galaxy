@@ -27,8 +27,8 @@
           <el-button type="success" icon="el-icon-download">
               导出数据
           </el-button>
-          <el-button type="primary" icon="el-icon-plus" @click="setDialogVisible">
-              添加奖惩记录
+          <el-button type="primary" icon="el-icon-plus" @click="optionClick">
+              {{optionTypeName}}
           </el-button>
           
       </div>
@@ -144,7 +144,14 @@
       politicsstatus: Array,
       positions: Array,
       editData: Object,
-      placeholder:String
+      placeholder:String,
+      optionTypeName: {
+        type: String,
+        default(){
+          return '添加'
+        }
+      },
+      optionRoutePath: String
     },
     data() {
       return {
@@ -197,6 +204,15 @@
       exitDetail(elm){
         this.dialogVisible = false
         this.search()
+      },
+      optionClick(){
+        this.$router.push({
+         path: this.optionRoutePath,
+         // name: 'mallList',
+         query: {
+        
+         }
+        })
       }
     },
     computed: {

@@ -1,7 +1,9 @@
 <template>
   <div>
     <search-bar :placeholder='placeholder'
-                @search="search"/>
+                @search="search"
+                :optionTypeName='optionTypeName'
+                :optionRoutePath='optionRoutePath'/>
     <div>
       <el-table
         :data="list"
@@ -21,24 +23,33 @@
         width="180">
       </el-table-column>
       <el-table-column
-        prop="subtitle"
-        label="副标题"
-        width="180">
-      </el-table-column>
-      <el-table-column
-      prop="subtitle"
-      label="副标题"
-      width="180">
-    </el-table-column>
-      <el-table-column
-        prop="tag"
-        label="标签"
-        width="150">
-      </el-table-column>
-      <el-table-column
         prop="creator"
         label="作者"
         width="100">
+      </el-table-column>
+      <el-table-column
+        prop="gmtCreate"
+        label="创建时间"
+        width="170">
+        <template slot-scope="scope">
+          {{scope.row.gmtCreate | dateFormat}}
+        </template>
+      </el-table-column>
+      <el-table-column
+      prop="gmtCreate"
+      label="创建时间"
+      width="170">
+      <template slot-scope="scope">
+        {{scope.row.gmtCreate | dateFormat}}
+      </template>
+      </el-table-column>
+      <el-table-column
+        prop="gmtCreate"
+        label="创建时间"
+        width="170">
+        <template slot-scope="scope">
+          {{scope.row.gmtCreate | dateFormat}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="gmtCreate"
@@ -62,8 +73,8 @@
         fixed="right"
         label="操作">
       <template slot-scope="scope">
-        <el-button style="padding: 3px" size="mini" type="primary" @click=showNote(scope.row)>查看</el-button>
-        <el-button style="padding: 3px" size="mini" @click=editNote(scope.row)>编辑</el-button>
+        <el-button style="padding: 3px" size="mini" type="primary" @click=showMindMap(scope.row,false)>查看</el-button>
+        <el-button style="padding: 3px" size="mini" @click=showMindMap(scope.row,true)>编辑</el-button>
         <el-button style="padding: 3px" slot="reference" size="mini" type="danger"  @click=delNote(scope.row.id,scope.$index)>删除</el-button>
       </template>
       </el-table-column>
@@ -82,12 +93,10 @@
 </template>
 
 <script>
-  import {findNote, delNote} from '@/network/note'
-
+  import { findMindMap } from '@/network/mindMap'
   import SearchBar from '@/components/common/searchBar/SearchBar';
-
   export default {
-    name: 'NoteList',
+    name: 'MindMapList',
     data() {
       return {
         list: [],
@@ -95,75 +104,53 @@
         currentPage: 1,
         pageSize: 10,
         loading: false,
-        placeholder: '请输入标题关键字'
+        placeholder: '请输入标题关键字',
+        optionTypeName: '添加思维导图',
+        optionRoutePath: '/index/mindMapEdit'
       }
     },
     created() {
-      
+
     },
     methods: {
-      search(key){
-        this.findNote(key)
-      },
-      showNote(data){
-        const routeUrl = this.$router.resolve({
-          path: '/note',
-          query: {id: data.id}
-        })
-        window.open(routeUrl.href, '_blank')
-      },
-      findNote(param){
-        if(typeof(param) == 'string'){
-          param = 'title='+param
-        }
-        findNote(param, this.currentPage).then(res =>{
-          const obj = res.obj
-          this.list = obj.list
-          this.total = obj.total
-          this.currentPage = obj.pageNum
-        })
+      currentChange(){
+
       },
       sizeChange(){
-        console.log('sizeChange');
+
       },
-      currentChange(currentPage){
-        this.currentPage = currentPage
-        console.log('currentPage='+currentPage);
-        this.findNote()
+      search(){
+        this.findMindMap()
       },
-      delNote(id,index){
-        delNote(id).then(res =>{
-          console.log(res);
+      findMindMap(){
+        const queryVo = new Object()
+        queryVo['title'] = this.title
+        queryVo['page'] = this.currentPage
+        queryVo['size'] = this.pageSize
+        findMindMap(queryVo).then(res =>{
           if(res.status == 200){
-            this.list.splice(index,1);
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            });
+            this.list = res.obj.list
           }
+          
         })
       },
-      editNote(data){
+      showMindMap(data,isEdit){
         this.$router.push({
-         path: '/index/editNote',
+         path: '/index/mindMapEdit',
          // name: 'mallList',
          query: {
-            data
+            data,
+            isEdit
          }
         })
-      }
+      },
+    
     },
     components: {
       SearchBar
-    },
-    filters:{
-      tofixed(price){
-        return '￥'+price.toFixed(2);
-      }
-  }
+    }
   }
 </script>
 
 <style scoped>
-  
 </style>

@@ -7,6 +7,8 @@ const Home     = () => import('@/views/home/Home')
 const ViewNote = () => import('@/views/note/ViewNote')
 const NoteList = () => import('@/views/note/NoteList')
 const IndexPage= () => import('@/views/IndexPage')
+const MindMapEdit = () => import('@/views/mindmap/MindMapEdit')
+const MindMapList = () => import('@/views/mindmap/MindMapList')
 
 const routes = [
   {
@@ -32,6 +34,14 @@ const routes = [
       {
         path: 'noteList',
         component: NoteList
+      },
+      {
+        path: 'mindMapEdit',
+        component: MindMapEdit
+      },
+      {
+        path: 'mindMapList',
+        component: MindMapList
       }
     ]
   },

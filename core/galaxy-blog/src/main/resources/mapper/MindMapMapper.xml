@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.galaxyblog.mapper.MindMapMapper" >
+    <select id="searchMindMapPages" parameterType="map" resultType="com.galaxy.galaxyblog.model.MindMap">
+        select * from mind_map
+        <where>
+            <if test="params.title != null">
+                and title like concat(#{params.title},'%')
+            </if>
+        </where>
+        order by gmt_create desc
+    </select>
+
+</mapper>

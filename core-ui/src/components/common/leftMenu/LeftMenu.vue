@@ -19,6 +19,7 @@
           </template>
           <el-menu-item-group>
             <el-menu-item index="/index/editNote" >写博客</el-menu-item>
+            <el-menu-item index="/index/mindMapList">思维脑图</el-menu-item>
             <el-menu-item index="/index/noteList">博客管理</el-menu-item>
           </el-menu-item-group>
           <el-submenu index="1-4">
