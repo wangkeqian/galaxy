@@ -14,8 +14,6 @@
       }
     },
     created() {
-      console.log('这里是App.vue');
-      
     },
     methods: {},
     components: {}

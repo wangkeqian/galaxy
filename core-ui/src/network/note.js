@@ -19,6 +19,17 @@ export function findNote(article,page){
     }
   })
 }
+//根据标题查询->走的redis
+export function findNoteByTitle(key){
+  key = decodeURI(key)
+  return request({
+    method: 'get',
+    url: '/article/find?'+key+'&',
+    params: {
+      page
+    }
+  })
+}
 //根据id查文章
 export function findNoteById(id){
   return request({

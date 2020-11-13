@@ -3,6 +3,7 @@ package com.galaxy.galaxyblog.controller;
 import com.galaxy.galaxyblog.common.HttpResultResp;
 import com.galaxy.galaxyblog.model.Article;
 import com.galaxy.galaxyblog.service.ArticleService;
+import org.apache.ibatis.annotations.Options;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,5 +27,9 @@ public class ArticleEditApi {
     @DeleteMapping("/del/{id}")
     public HttpResultResp delArticle(@PathVariable("id")Integer id){
         return HttpResultResp.ok(articleService.delById(id));
+    }
+    @GetMapping("/refresh")
+    public HttpResultResp refresh(){
+        return HttpResultResp.ok(articleService.refresh());
     }
 }

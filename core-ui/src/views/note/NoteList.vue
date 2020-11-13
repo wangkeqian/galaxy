@@ -64,7 +64,7 @@
       <template slot-scope="scope">
         <el-button style="padding: 3px" size="mini" type="primary" @click=showNote(scope.row)>查看</el-button>
         <el-button style="padding: 3px" size="mini" @click=editNote(scope.row)>编辑</el-button>
-        <el-button style="padding: 3px" slot="reference" size="mini" type="danger"  @click=delNote(scope.row.id,scope.$index)>删除</el-button>
+        <el-button style="padding: 3px" disabled slot="reference" size="mini" type="danger"  @click=delNote(scope.row.id,scope.$index)>删除</el-button>
       </template>
       </el-table-column>
     </el-table>

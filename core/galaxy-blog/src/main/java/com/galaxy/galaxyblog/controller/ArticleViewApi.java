@@ -3,15 +3,15 @@ package com.galaxy.galaxyblog.controller;
 import com.galaxy.galaxyblog.common.HttpResultResp;
 import com.galaxy.galaxyblog.model.Article;
 import com.galaxy.galaxyblog.service.ArticleService;
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.math.BigInteger;
+import java.util.Arrays;
 
 /**
  *
@@ -20,17 +20,18 @@ import java.math.BigInteger;
  * @date 2020/10/24
  */
 @RestController
+@RequestMapping("/article")
 public class ArticleViewApi {
 
     @Autowired
     ArticleService articleService;
 
-    @GetMapping("/article/{id}")
+    @GetMapping("/{id}")
     public HttpResultResp searchArticle(@PathVariable BigInteger id){
         return HttpResultResp.ok(articleService.findById(id));
     }
 
-    @GetMapping("/article/find")
+    @GetMapping("/find")
     public HttpResultResp searchArticleByParams(Article Args,
                                                 Integer page,
                                                 @RequestParam(
@@ -40,4 +41,9 @@ public class ArticleViewApi {
         return HttpResultResp.ok(articleService.findByParams(Args,page,size));
     }
 
+    @GetMapping("/searchArticleByTitle")
+    public HttpResultResp searchArticleByTitle(@RequestParam(name = "key") String key){
+
+        return HttpResultResp.ok(articleService.findByTitle(key));
+    }
 }
