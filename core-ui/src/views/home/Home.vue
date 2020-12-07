@@ -1,25 +1,29 @@
 <template>
   <div>
-    <el-autocomplete
-      v-model="state"
-      :fetch-suggestions="querySearchAsync"
-      placeholder="请输入内容"
-      @select="handleSelect"
-    />
-    <el-card class="box-card" shadow="hover" v-for="item in list" >
-      <div slot="header" class="clearfix">
-        <span><a href="#" @click=showNote(item.id)>{{item.title}}</a></span>
-        <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-      </div>
-      <div>
-        <div class="tag">
-          <el-tag type="danger" size="mini" v-for=" tag in item.tag.split(',') ">{{tag}}</el-tag>
+    <div class="box-card">
+      <el-card  shadow="hover" v-for="item in list" >
+        <div slot="header" class="clearfix">
+          <span><a href="#" @click=showNote(item.id)>{{item.title}}</a></span>
+          <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
         </div>
-      </div>
-      <div style="color: #999;">
-        <span style="font-size: 14px;">{{item.content | contextSpliter}}</span>
-      </div>
-    </el-card>
+        <div>
+          <div class="tag">
+            <el-tag type="danger" size="mini" v-for=" tag in item.tag.split(',') ">{{tag}}</el-tag>
+          </div>
+        </div>
+        <div style="color: #999;">
+          <span style="font-size: 14px;">{{item.content | contextSpliter}}</span>
+        </div>
+      </el-card>
+    </div>
+    <div class="ranking-list">
+      <el-card  shadow="hover">
+        <p>热门排行榜</p>
+      </el-card>
+      <el-card  shadow="hover" v-for="item in list" >
+        <span><a href="#" @click=showNote(item.id)>{{item.title}}</a></span>
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -96,16 +100,27 @@
 
 <style scoped>
   .box-card{
-    margin-top: 20px;
-    width: 70%;
-    margin: auto;
+    /* margin-top: 20px; */
+    width: 60%;
+    margin-left: 10%;
+    float: left;
+  }
+  .ranking-list{
+    float: left;
+    margin-left: 50px;
+
   }
   .el-autocomplete{
     margin: 0, auto;
   }
-  a{
+  .box-card a{
     color: black;
     font-size: large;
+    text-decoration: none
+  }
+  .ranking-list a{
+    color: black;
+    font-size: small;
     text-decoration: none
   }
   a:hover{

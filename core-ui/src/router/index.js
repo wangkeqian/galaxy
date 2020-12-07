@@ -13,7 +13,10 @@ const MindMapList = () => import('@/views/mindmap/MindMapList')
 const routes = [
   {
     path: '',
-    redirect: '/index'
+    redirect: '/index',
+    meta: {
+      title: '欢迎来到Galaxy博客'
+    }
   },
   {
     path: '/index',
@@ -21,7 +24,10 @@ const routes = [
     children: [
       {
         path: '',
-        redirect: 'home'
+        redirect: 'home',
+        meta: {
+          title: '欢迎来到Galaxy博客'
+        }
       },
       {
         path: 'home',
