@@ -2,9 +2,11 @@ package com.galaxy.galaxyblog.common.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -192,7 +194,7 @@ public final class RedisUtil {
      * @param time
      * @return
      */
-    public boolean hmset(String key, Map<Object, Object> map, long time){
+    public boolean hmset(String key, Map<String, Object> map, long time){
         try {
             redisTemplate.opsForHash().putAll(key, map);
             if (time>0){
@@ -509,5 +511,71 @@ public final class RedisUtil {
             return 0;
         }
     }
+
+    /**
+     * 获得key数组里面key2元素的索引
+     * @param key
+     * @param key2
+     * @return
+     */
+    public Long rank(String key, Object key2) {
+        return redisTemplate.opsForZSet().rank(key, key2);
+    }
+    /**
+     * 有序集合添加
+     * @param key
+     * @param value
+     * @param scoure
+     */
+    public void zAdd(String key, Object value, double scoure) {
+        redisTemplate.opsForZSet().add(key, value, scoure);
+    }
+    /**
+     * 获得key数组里面key2元素的排序值
+     * @param key
+     * @param key2
+     * @return
+     */
+    public double score(String key, Object key2) {
+        return redisTemplate.opsForZSet().score(key, key2);
+    }
+    /**
+     * 从高到低的排序集中获取从头(start)到尾(end)内的元素。
+     * @param key
+     * @param start
+     * @param end
+     * @return
+     */
+    public Set<Object> reverseRange(String key, long start, long end) {
+        return redisTemplate.opsForZSet().reverseRange(key, start, end);
+    }
+    /**
+     * 根据分数保留指定个数，其余的元素删除
+     * @param key
+     * @param number
+     * @return
+     */
+    public Boolean remove(String key, Integer number) {
+        ZSetOperations<String, Object> zset = redisTemplate.opsForZSet();
+        Long size = zset.size(key);
+        if (size > number) {
+            //获取变量指定区间的元素
+            Set<ZSetOperations.TypedTuple<Object>> typedTuples = zset.rangeWithScores(key, 0, (size - 1) - number);
+            Set set = new HashSet();
+            for (ZSetOperations.TypedTuple<Object> o : typedTuples) {
+                set.add(o.getValue());
+            }
+            for (Object o : set) {
+                Long aLong = zset.remove(key, o);
+                if (aLong == null) {
+                    return false;
+                }
+            }
+            return true;
+        }else {
+            return true;
+        }
+    }
+
 
 }

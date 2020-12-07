@@ -14,9 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
+
+import static org.springframework.data.redis.connection.DataType.ZSET;
 
 /**
  * TODO 请说明此类的作用
@@ -37,21 +42,34 @@ public class ArticleService {
     }
 
     @Transactional
-    public int insertOrUpdate(Article article) {
+    public void insertOrUpdate(Article article) {
+        ZoneOffset zoneOffset=ZoneOffset.ofHours(8);
+        LocalDateTime localDateTime=LocalDateTime.now();
         if (article.getId() != null) {
             redisUtil.hdel("articleSimpleInfo",String.valueOf(article.getId()));
             redisUtil.hset("articleSimpleInfo",String.valueOf(article.getId()),article);
             redisUtil.lSet("articleList",article);
-            return articleMapper.updateById(article);
+            articleMapper.updateById(article);
         }
-        redisUtil.hset("articleSimpleInfo",article.getId(),article);
-        return articleMapper.insert(article);
+        articleMapper.insert(article);
+        redisUtil.zAdd("articleByTime","article:"+String.valueOf(article.getId()),localDateTime.toEpochSecond(zoneOffset));
     }
 
     public Article findById(BigInteger id) {
+        Long articlePV = redisUtil.rank("articlePV", id);
+        if (articlePV == null){
+            redisUtil.zAdd("articlePV",id,1.0);
+        }else {
+            // 如果存在,则获取排序值  并且+1
+            int score = (int) redisUtil.score("articlePV", id);
+            redisUtil.zAdd("articlePV", id, score + 1);
+        }
         return articleMapper.selectById(id);
     }
-
+    public Set<Object> hotSearch() {
+        Set<Object> strSet = redisUtil.reverseRange("articlePV", 0, 10 - 1); //正确个数为下标-1
+        return strSet;
+    }
     public PageInfo<Article> findByParams(Article article, Integer page, int size) {
         PageHelper.startPage(page,size);
         List<Article> articles = articleMapper.searchArticlePages(article);

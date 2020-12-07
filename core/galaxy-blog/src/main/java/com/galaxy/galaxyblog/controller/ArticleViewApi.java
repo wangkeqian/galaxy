@@ -46,4 +46,8 @@ public class ArticleViewApi {
 
         return HttpResultResp.ok(articleService.findByTitle(key));
     }
+    @GetMapping("/getHotArticle")
+    public HttpResultResp getHotArticle(){
+        return HttpResultResp.ok(articleService.hotSearch());
+    }
 }

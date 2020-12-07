@@ -28,6 +28,7 @@ public class RedisConfig {
     @Bean
     @SuppressWarnings("all")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory){
+        System.out.println("redisTemplate 实例化中");
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(factory);
         redisTemplate.setEnableTransactionSupport(true); //支持事务  TODO redis事务待完善
