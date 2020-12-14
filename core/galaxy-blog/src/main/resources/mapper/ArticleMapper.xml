@@ -17,7 +17,20 @@
     </sql>
 
     <select id="searchArticlePages" resultType="com.galaxy.galaxyblog.model.Article">
-        select id, title, subtitle, content, gmt_create, gmt_modified, creator, updator, tag from article
+        select
+        a.id,
+        title,
+        subtitle,
+        content,
+        a.gmt_create,
+        a.gmt_modified,
+        a.creator,
+        a.updator,
+        tag,
+        u.name author
+        from article a
+        left join sys_user u on a.creator = u.id
+
         <where>
             <if test="params.title != null">
                 and title like concat(#{params.title},'%')

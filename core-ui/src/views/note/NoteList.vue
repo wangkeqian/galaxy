@@ -36,7 +36,7 @@
         width="150">
       </el-table-column>
       <el-table-column
-        prop="creator"
+        prop="author"
         label="作者"
         width="100">
       </el-table-column>

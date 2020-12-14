@@ -23,6 +23,13 @@ public final class RedisUtil {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    public RedisUtil() {
+    }
+
+    public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
     /**
      * 设置缓存期限
      * @param key
@@ -536,7 +543,7 @@ public final class RedisUtil {
      * @param key2
      * @return
      */
-    public double score(String key, Object key2) {
+    public Double score(String key, Object key2) {
         return redisTemplate.opsForZSet().score(key, key2);
     }
     /**

@@ -9,6 +9,8 @@ const NoteList = () => import('@/views/note/NoteList')
 const IndexPage= () => import('@/views/IndexPage')
 const MindMapEdit = () => import('@/views/mindmap/MindMapEdit')
 const MindMapList = () => import('@/views/mindmap/MindMapList')
+const Login    = () => import('@/views/sys/Login')
+const Profile  = () => import('@/views/profile/Profile')
 
 const routes = [
   {
@@ -48,6 +50,10 @@ const routes = [
       {
         path: 'mindMapList',
         component: MindMapList
+      },
+      {
+        path: 'profile',
+        component: Profile
       }
     ]
   },
@@ -55,6 +61,10 @@ const routes = [
     path: '/note',
     component: ViewNote
   },
+  {
+    path: '/login',
+    component: Login
+  }
 ]
 
 const router = new VueRouter({

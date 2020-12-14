@@ -1,5 +1,6 @@
 package com.galaxy.galaxyblog.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 /**
@@ -38,5 +39,11 @@ public class Article extends DataEntity {
      * 反对量
      */
     private int againstNum;
+
+    /**
+     * --------------展示字段，非数据库字段------
+     */
+    @TableField(exist = false)
+    private String author; //作者名
 
 }

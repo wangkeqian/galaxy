@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.galaxy.galaxyblog.common.utils.RedisUtil;
+import com.galaxy.galaxyblog.config.login.LoginIntercept;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
 import com.github.pagehelper.PageHelper;
@@ -17,6 +18,7 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -41,6 +43,8 @@ public class ArticleService {
         return articleMapper.selectList(null);
     }
 
+
+
     @Transactional
     public void insertOrUpdate(Article article) {
         ZoneOffset zoneOffset=ZoneOffset.ofHours(8);
@@ -51,17 +55,19 @@ public class ArticleService {
             redisUtil.lSet("articleList",article);
             articleMapper.updateById(article);
         }
+        article.setCreator(String.valueOf(LoginIntercept.getLoginUserInfo().get("id")));
         articleMapper.insert(article);
         redisUtil.zAdd("articleByTime","article:"+String.valueOf(article.getId()),localDateTime.toEpochSecond(zoneOffset));
     }
 
     public Article findById(BigInteger id) {
+        Map map = LoginIntercept.getLoginUserInfo();
         Long articlePV = redisUtil.rank("articlePV", id);
         if (articlePV == null){
             redisUtil.zAdd("articlePV",id,1.0);
         }else {
             // 如果存在,则获取排序值  并且+1
-            int score = (int) redisUtil.score("articlePV", id);
+            Double score =redisUtil.score("articlePV", id);
             redisUtil.zAdd("articlePV", id, score + 1);
         }
         return articleMapper.selectById(id);

@@ -1,9 +1,13 @@
 package com.galaxy.galaxyblog.service;
 
+import com.galaxy.galaxyblog.common.myenum.ErrorExceptionEnum;
 import com.galaxy.galaxyblog.common.utils.BeanCommonsUtils;
 import com.galaxy.galaxyblog.common.utils.RedisUtil;
+import com.galaxy.galaxyblog.config.excep.MyException;
+import com.galaxy.galaxyblog.config.login.LoginIntercept;
 import com.galaxy.galaxyblog.mapper.SysUserMapper;
 import com.galaxy.galaxyblog.model.SysUser;
+import com.galaxy.galaxyblog.model.vo.SysUserVo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,16 +38,17 @@ public class SysUserService {
         return "注册成功";
     }
 
-    public SysUser loginAndVerify(String username, String password, HttpServletResponse response) {
+    public SysUserVo loginAndVerify(String username, String password, HttpServletResponse response) {
         SysUser sysUser = sysUserMapper.verifySysUser(username, password);
+        String token = "";
         if (null != sysUser){
             Long milliSecond = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
             Map<String, Object> userMap = BeanCommonsUtils.objectToMap(sysUser);
             userMap.put("token",milliSecond);
-            redisUtil.hmset("galaxy:user:"+sysUser.getId(),userMap,600);
-            response.addCookie(new Cookie("userToken","galaxy:user:"+sysUser.getId()+"_"+milliSecond));
+            redisUtil.hmset("galaxy:user:"+sysUser.getId(),userMap,6000);
+            token = "galaxy:user:"+sysUser.getId()+"_"+milliSecond;
         }
-        return sysUser;
+        return new SysUserVo(sysUser,token);
     }
 
     public SysUser loginStatus(String token) {
@@ -51,8 +56,31 @@ public class SysUserService {
         String[] info = token.split("_");
         Map<Object, Object> user = redisUtil.hmget(info[0]);
         if (null != user && String.valueOf(user.get("token")).equals(info[1])){
-            sysUser = (SysUser) BeanCommonsUtils.mapToObject(user, SysUser.class);
+            sysUser = (SysUser) BeanCommonsUtils.map2Object(user, SysUser.class);
         }
         return sysUser;
+    }
+
+    public SysUser getSysUserById(String id) {
+        SysUser sysUser = sysUserMapper.selectById(id);
+        if (null == sysUser) throw new MyException(ErrorExceptionEnum.USER_NOT_FOUND);
+        return sysUser;
+    }
+
+    /**
+     * 对方新增粉丝，己方多了关注者
+     */
+    public String addFollower(String id) {
+        Map loginUserInfo = LoginIntercept.getLoginUserInfo();
+        Long milliSecond = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        redisUtil.zAdd("following:"+loginUserInfo.get("id"),id,milliSecond);//我的关注列表新增
+        redisUtil.zAdd("followers:"+id,loginUserInfo.get("id"),milliSecond);//对方的粉丝列表新增
+        return "关注成功";
+    }
+
+    public Boolean isFollowing(String id) {
+        Map loginUserInfo = LoginIntercept.getLoginUserInfo();
+        Double score = redisUtil.score("following:" + loginUserInfo.get("id"), id);
+        return score != null;
     }
 }

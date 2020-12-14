@@ -17,7 +17,7 @@ import java.util.UUID;
  * @date 2020/4/18
  */
 @Data
-public class DataEntity extends Model {
+public class DataEntity {
     @TableId(value="id",type= IdType.AUTO)
     private BigInteger id;
     private Date gmtCreate;

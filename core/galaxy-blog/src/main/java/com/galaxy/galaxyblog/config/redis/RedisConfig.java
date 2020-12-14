@@ -1,4 +1,4 @@
-package com.galaxy.galaxyblog.config;
+package com.galaxy.galaxyblog.config.redis;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

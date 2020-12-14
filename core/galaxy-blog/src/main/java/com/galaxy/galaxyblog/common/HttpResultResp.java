@@ -35,6 +35,10 @@ public class HttpResultResp {
         return new HttpResultResp(500, msg, null);
     }
 
+    public static HttpResultResp error(int code, String msg) {
+        return new HttpResultResp(code, msg, null);
+    }
+
     public static HttpResultResp error(String msg, Object obj) {
         return new HttpResultResp(500, msg, obj);
     }

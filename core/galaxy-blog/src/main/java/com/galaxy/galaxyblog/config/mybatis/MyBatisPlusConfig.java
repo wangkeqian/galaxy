@@ -1,4 +1,4 @@
-package com.galaxy.galaxyblog.config;
+package com.galaxy.galaxyblog.config.mybatis;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;

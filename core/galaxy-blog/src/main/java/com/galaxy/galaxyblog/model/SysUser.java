@@ -2,6 +2,9 @@ package com.galaxy.galaxyblog.model;
 
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 /**
  * 用户表
  *
@@ -27,12 +30,21 @@ public class SysUser extends DataEntity{
 
     private String phone;
 
+    private Date birthday;
+    /**
+     * 工作岗位/职位
+     */
+    private String position;
+
     private String address;
     /**
      * 是否可用
      */
     private String enable;
 
-    private String remark;
+    /**
+     * 个人简介
+     */
+    private String intro;
 
 }

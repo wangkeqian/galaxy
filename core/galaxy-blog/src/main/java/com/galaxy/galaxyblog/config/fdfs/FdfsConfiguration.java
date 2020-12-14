@@ -1,4 +1,4 @@
-package com.galaxy.galaxyblog.config;
+package com.galaxy.galaxyblog.config.fdfs;
 
 import com.github.tobato.fastdfs.FdfsClientConfig;
 import org.springframework.context.annotation.Configuration;

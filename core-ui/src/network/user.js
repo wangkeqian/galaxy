@@ -10,9 +10,9 @@ export function register(userInfo){
 //校验用户
 export function login(username,password){
   return request({
-    method: 'post',
+    method: 'get',
     url: '/user/login',
-    data: {
+    params: {
       username,
       password
     }
@@ -26,3 +26,25 @@ export function loginStatus(token){
     data: token
   })
 }
+//用户信息
+export function getUserProfile(id){
+  return request({
+    method: 'get',
+    url: '/user/getSysUser/'+id
+  })
+}
+//关注用户
+export function addFollowing(id){
+  return request({
+    method: 'get',
+    url: '/user/addFollower/'+id
+  })
+}
+//是否为关注用户
+export function isFollowing(id){
+  return request({
+    method: 'get',
+    url: '/user/isFollowing/'+id
+  })
+}
+//取消关注用户

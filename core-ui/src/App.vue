@@ -21,7 +21,7 @@
 </script>
 <style>
   html,body,#app{
- 		height: 100%;
- 		width: 100%;
+ 		height: 768px;
+ 		width: 1400px;
 	}
 </style>
