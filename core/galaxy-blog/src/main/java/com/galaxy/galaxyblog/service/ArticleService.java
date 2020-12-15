@@ -17,10 +17,7 @@ import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static org.springframework.data.redis.connection.DataType.ZSET;
@@ -70,7 +67,7 @@ public class ArticleService {
             Double score =redisUtil.score("articlePV", id);
             redisUtil.zAdd("articlePV", id, score + 1);
         }
-        return articleMapper.selectById(id);
+        return articleMapper.findArticleById(id);
     }
     public Set<Object> hotSearch() {
         Set<Object> strSet = redisUtil.reverseRange("articlePV", 0, 10 - 1); //正确个数为下标-1
@@ -103,5 +100,31 @@ public class ArticleService {
     public String findByTitle(String key) {
 
         return null;
+    }
+
+    /**
+     * 首先拿到关注列表
+     * 根据关注列表获取文章
+     * @return
+     */
+    public PageInfo<Article> getHomePageArticle(int page) {
+        PageHelper.startPage(page,10);
+        Map loginUserInfo = LoginIntercept.getLoginUserInfo();
+        Set<Object> followingList = getFollowingList();
+        followingList.add(loginUserInfo.get("id"));
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("followingList",followingList);
+        List<Article> articles = articleMapper.homePageArticle(params);
+        PageInfo<Article> pageInfo = new PageInfo<>(articles);
+        return pageInfo;
+
+    }
+
+    private Set<Object> getFollowingList() {
+        Map loginUserInfo = LoginIntercept.getLoginUserInfo();
+        String id = String.valueOf(loginUserInfo.get("id"));
+        Set<Object> list = redisUtil.zRange("following:" + id, 0, -1);
+        return list;
     }
 }

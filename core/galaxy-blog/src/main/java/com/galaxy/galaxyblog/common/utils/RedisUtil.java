@@ -556,6 +556,27 @@ public final class RedisUtil {
     public Set<Object> reverseRange(String key, long start, long end) {
         return redisTemplate.opsForZSet().reverseRange(key, start, end);
     }
+
+    /**
+     * 从有序集合中获取元素（无序）
+     * @param key
+     * @param start
+     * @param end
+     * @return
+     */
+    public Set<Object> zRange(String key , long start, long end){
+        return redisTemplate.opsForZSet().range(key, start, end);
+    }
+
+    /**
+     * 删除有序集合
+     * @param key
+     * @param item
+     * @return
+     */
+    public Long zRem(String key, String item){
+        return redisTemplate.opsForZSet().remove(key, item);
+    }
     /**
      * 根据分数保留指定个数，其余的元素删除
      * @param key

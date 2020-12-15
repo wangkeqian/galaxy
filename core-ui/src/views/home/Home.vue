@@ -28,7 +28,7 @@
 </template>
 
 <script>
-  import {findNote, delNote} from '@/network/note'
+  import {homePageNote, delNote} from '@/network/note'
 
   export default {
     name: 'Home',
@@ -52,8 +52,9 @@
       this.findNote()
     },
     methods: {
-      findNote(param){
-        findNote(param, this.currentPage).then(res =>{
+      findNote(){
+        homePageNote(this.currentPage).then(res =>{
+          console.log(res);
           
           this.list = res.obj.list
         })

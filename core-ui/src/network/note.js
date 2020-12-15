@@ -8,12 +8,26 @@ export function addNote(article){
     data: article
   })
 }
-//查询
+//博客管理查询
 export function findNote(article,page){
   article = decodeURI(article)
   return request({
     method: 'get',
     url: '/article/find?'+article+'&',
+    params: {
+      page
+    }
+  })
+}
+/**
+ * 首页文章
+ * @param {*} key 
+ * 
+ */
+export function homePageNote(page){
+  return request({
+    method: 'get',
+    url: '/article/homePageArticleQuery',
     params: {
       page
     }

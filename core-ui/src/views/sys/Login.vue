@@ -41,11 +41,10 @@
       login(){
         this.loginStatus = true
         login(this.username,this.password).then(res =>{
-          
           sessionStorage.setItem('token',res.obj.token)
+          console.log(res.obj.sysUser);
+          sessionStorage.setItem('loginUserId',res.obj.sysUser.id)
           const token = sessionStorage.getItem('token')   
-          console.log('token='+token);
-          
           this.$router.push('/index/home')
         }).catch(error =>{
           this.loginStatus = false

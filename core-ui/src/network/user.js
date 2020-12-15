@@ -48,3 +48,9 @@ export function isFollowing(id){
   })
 }
 //取消关注用户
+export function cancelFollowing(id){
+  return request({
+    method: 'get',
+    url: '/user/cancelFollowing/'+id
+  })
+}

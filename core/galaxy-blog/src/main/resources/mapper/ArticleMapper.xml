@@ -16,6 +16,22 @@
     id, eid, asDate, beforeSalary, afterSalary, reason, remark
     </sql>
 
+    <select id="findArticleById" resultType="com.galaxy.galaxyblog.model.Article">
+     select
+        a.id,
+        title,
+        subtitle,
+        content,
+        a.gmt_create,
+        a.gmt_modified,
+        a.creator,
+        a.updator,
+        tag,
+        u.name author
+        from article a
+        left join sys_user u on a.creator = u.id
+        where a.id = #{id}
+    </select>
     <select id="searchArticlePages" resultType="com.galaxy.galaxyblog.model.Article">
         select
         a.id,
@@ -34,6 +50,38 @@
         <where>
             <if test="params.title != null">
                 and title like concat(#{params.title},'%')
+            </if>
+            <if test="params.followingList">
+                <foreach collection="params.followingList" item="item" index="index"  open="(" separator="or" close=")">
+                    u.id = '${item.id}'
+                </foreach>
+            </if>
+        </where>
+        order by gmt_create desc
+    </select>
+    <select id="homePageArticle" resultType="com.galaxy.galaxyblog.model.Article">
+        select
+        a.id,
+        title,
+        subtitle,
+        content,
+        a.gmt_create,
+        a.gmt_modified,
+        a.creator,
+        a.updator,
+        tag,
+        u.name author
+        from article a
+        left join sys_user u on a.creator = u.id
+
+        <where>
+            <if test="params.title != null">
+                and title like concat(#{params.title},'%')
+            </if>
+            <if test="params.followingList">
+                <foreach collection="params.followingList" item="item" index="index"  open="(" separator="or" close=")">
+                    u.id = '${item}'
+                </foreach>
             </if>
         </where>
         order by gmt_create desc

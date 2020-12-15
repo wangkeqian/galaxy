@@ -65,8 +65,6 @@
           if(res.status == 200){
             this.showUser = true
             this.userInfo = res.obj
-            console.log(this.userInfo);
-            
           }
           
         })

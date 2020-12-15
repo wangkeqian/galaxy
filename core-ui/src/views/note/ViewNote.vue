@@ -24,7 +24,7 @@
         </el-row>
         <el-row>
           <el-divider  content-position="right">
-            <span style="color: gray;font-size:larger;">{{creator}} </span>
+            <span style="color: gray;font-size:larger;"><a href="#" @click="intoUserProfile">{{creator}}</a> </span>
             <span style="color: gray;"> {{gmtCreate}}</span>
           </el-divider>
         </el-row>
@@ -65,6 +65,13 @@
       init(id){
         this.findNoteById(id)
       },
+      intoUserProfile(){
+        const routeUrl = this.$router.resolve({
+          path: '/index/profile',
+          query: {id: this.article.creator}
+        })
+        window.open(routeUrl.href, '_blank')
+      },
       findNoteById(id){
         findNoteById(id).then(res =>{
           this.article = res.obj
@@ -93,7 +100,7 @@
         return this.dateFormat(this.article.gmtCreate)
       },
       creator(){
-        return this.article.creator ? this.article.creator:'佚名'
+        return this.article.creator != null ? this.article.author:'佚名'
       }
     },
     mounted() {

@@ -6,7 +6,38 @@
         <el-avatar :size="100" :src="user.headPhoto"></el-avatar>
       </div>
       <div class="innerInfo">
-        <h1>{{user.name}} <el-button style="float: right;" :type="focusType" size="medium" :icon="focusIcon" @click="focus">{{focusStatus}}</el-button></h1>
+        <h1>
+          {{user.name}} 
+          <template v-if='isMyself'>
+            <el-button style="float: right;" 
+              type='primary'
+              size="medium" 
+              icon='el-icon-circle-plus-outline'
+              @click="focus"
+              v-if="!followeStatus">
+              关注
+            </el-button>
+            <el-popconfirm
+              v-else
+              confirm-button-text='确定'
+              cancel-button-text='不用了'
+              icon="el-icon-info"
+              icon-color="red"
+              title="确定要取消关注吗？"
+              @onConfirm="focus"
+            >
+              <el-button style="float: right;" 
+              type='success'
+              size="medium" 
+              icon='el-icon-circle-check'
+              
+              slot="reference"
+              >
+              已关注
+            </el-button>
+            </el-popconfirm>
+          </template>
+          </h1>
         <h4>{{user.position}} | {{user.birthday | dateFormat}}</h4>
         <h4>
           <span><i class="el-icon-phone-outline"></i> {{user.phone}}</span> <span><i class="el-icon-link"></i>{{user.email}}</span>
@@ -33,7 +64,8 @@
   { 
     getUserProfile,
     addFollowing,
-    isFollowing
+    isFollowing,
+    cancelFollowing
   } 
   from '@/network/user'
   export default {
@@ -61,9 +93,17 @@
       },
       focus(){
         const id = this.id
-        addFollowing(id).then(res =>{
+        if(this.followeStatus){
+          //取消关注
+          cancelFollowing(id).then(res =>{
+            this.followeStatus = false
+          })
+        }else{
+          //关注
+          addFollowing(id).then(res =>{
           this.followeStatus = true
         })
+        }
       },
       isFollowing(){
         isFollowing(this.id).then(res =>{
@@ -71,19 +111,13 @@
             this.followeStatus = true
           }
         })
-      }
+      },
     },
     computed:{
-      focusStatus(){
-        return this.followeStatus?'已关注':'关注'
-      },
-      focusIcon(){
-        return this.followeStatus?'el-icon-circle-check':'el-icon-circle-plus-outline'
-      },
-      focusType(){
-        return this.followeStatus?'success':'primary'
-      },
-
+      isMyself(){
+        const id = sessionStorage.getItem('loginUserId')
+        return id != this.id
+      }
     },
     components: {}
   }

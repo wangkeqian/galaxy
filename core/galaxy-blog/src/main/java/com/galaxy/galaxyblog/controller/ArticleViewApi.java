@@ -31,6 +31,13 @@ public class ArticleViewApi {
         return HttpResultResp.ok(articleService.findById(id));
     }
 
+    /**
+     * 博客管理查询接口
+     * @param Args
+     * @param page
+     * @param size
+     * @return
+     */
     @GetMapping("/find")
     public HttpResultResp searchArticleByParams(Article Args,
                                                 Integer page,
@@ -49,5 +56,12 @@ public class ArticleViewApi {
     @GetMapping("/getHotArticle")
     public HttpResultResp getHotArticle(){
         return HttpResultResp.ok(articleService.hotSearch());
+    }
+    /*
+      获取主页文章
+     */
+    @GetMapping("/homePageArticleQuery")
+    public HttpResultResp homePageArticleQuery(Integer page){
+        return HttpResultResp.ok(articleService.getHomePageArticle(page));
     }
 }

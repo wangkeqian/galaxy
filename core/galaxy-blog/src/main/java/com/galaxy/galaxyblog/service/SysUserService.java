@@ -83,4 +83,11 @@ public class SysUserService {
         Double score = redisUtil.score("following:" + loginUserInfo.get("id"), id);
         return score != null;
     }
+
+    public String cancelFollowing(String id) {
+        Map loginUserInfo = LoginIntercept.getLoginUserInfo();
+        redisUtil.zRem("following:" + loginUserInfo.get("id"),id);
+        redisUtil.zRem("followers:"+id,String.valueOf(loginUserInfo.get("id")));
+        return "已取消关注";
+    }
 }

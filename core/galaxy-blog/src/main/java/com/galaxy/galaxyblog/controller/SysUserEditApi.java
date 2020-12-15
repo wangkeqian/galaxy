@@ -39,4 +39,8 @@ public class SysUserEditApi {
     public HttpResultResp addFollower(@PathVariable String id){
         return HttpResultResp.ok(sysUserService.addFollower(id));
     }
+    @GetMapping("/cancelFollowing/{id}")
+    public HttpResultResp cancelFollowing(@PathVariable String id){
+        return HttpResultResp.ok(sysUserService.cancelFollowing(id));
+    }
 }
