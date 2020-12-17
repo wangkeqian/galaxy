@@ -4,7 +4,7 @@
       <el-card  shadow="hover" v-for="item in list" >
         <div slot="header" class="clearfix">
           <span><a href="#" @click=showNote(item.id)>{{item.title}}</a></span>
-          <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+          <el-button style="float: right; padding: 3px 0" type="text" @click="wsBtn">操作按钮</el-button>
         </div>
         <div>
           <div class="tag">
@@ -29,7 +29,7 @@
 
 <script>
   import {homePageNote, delNote} from '@/network/note'
-
+  import { send } from '@/network/ws'
   export default {
     name: 'Home',
     data() {
@@ -82,7 +82,16 @@
           query: {id: id}
         })
         window.open(routeUrl.href, '_blank')
+      },
+      wsBtn(){
+        this.send('16',"你好 王克千")
+      },
+      send(uid,msg){
+        send(uid,msg).then(res =>{
+          console.log(res);    
+        })
       }
+      
     },
     mounted() {
       this.restaurants = this.loadAll();

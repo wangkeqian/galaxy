@@ -37,11 +37,13 @@
         squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
         sizeList: ["large", "medium", "small"],
         showUser: false,
-        userInfo:{}
+        userInfo:{},
+        socket: ''
       }
     },
     created() {
       this.getUser()
+      this.openWebsocket()
     },
     methods: {
       handleSelect(key, keyPath) {
@@ -71,6 +73,43 @@
       },
       goto(url){
         this.$router.push(url)
+      },
+      // - - - - - - - - - - - websoket - - - - - - - - - //
+      openWebsocket(){
+        if (typeof(WebSocket) == "undefined"){
+            console.log("您的浏览器不支持WebSocket");
+        }else {
+            let socket = this.socket
+            console.log("您的浏览器支持WebSocket");
+            const uid = sessionStorage.getItem('loginUserId')
+            var wsUrl = "ws://localhost:8090/ws/"+uid;
+            console.log('wsUrl='+wsUrl);
+            
+            if (socket != null){
+                socket.onclose;
+                socket = null;
+            }
+            socket = new WebSocket(wsUrl);
+            //打开事件
+            socket.onopen = this.onOpen();
+            socket.onmessage = this.onmessage()
+            socket.onclose = this.onclose()
+            socket.onerror = this.onerror()
+        }
+      },
+      onOpen(){
+        console.log("websocket 已开启")
+      },
+      onmessage(msg){
+        let response = "服务器来信咯: ";
+        console.log(response);
+        console.log(msg)
+      },
+      onclose(){
+        console.log("websocket 已关闭")
+      },
+      onerror(){
+        console.log("发生了错误")
       }
     },
     computed: {
