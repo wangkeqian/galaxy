@@ -3,6 +3,8 @@ package com.galaxy.galaxyblog.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.galaxy.galaxyblog.common.HttpResultResp;
+import com.galaxy.galaxyblog.common.WsResultResp;
 import com.galaxy.galaxyblog.common.utils.RedisUtil;
 import com.galaxy.galaxyblog.config.login.LoginIntercept;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
@@ -42,7 +44,6 @@ public class ArticleService {
 
 
 
-    @Transactional
     public void insertOrUpdate(Article article) {
         ZoneOffset zoneOffset=ZoneOffset.ofHours(8);
         LocalDateTime localDateTime=LocalDateTime.now();
@@ -52,9 +53,17 @@ public class ArticleService {
             redisUtil.lSet("articleList",article);
             articleMapper.updateById(article);
         }
-        article.setCreator(String.valueOf(LoginIntercept.getLoginUserInfo().get("id")));
+        Map loginUserInfo = LoginIntercept.getLoginUserInfo();
+        article.setCreator(String.valueOf(loginUserInfo.get("id")));
         articleMapper.insert(article);
         redisUtil.zAdd("articleByTime","article:"+String.valueOf(article.getId()),localDateTime.toEpochSecond(zoneOffset));
+        /**
+         * 群发推送
+         */
+        String id = String.valueOf(loginUserInfo.get("id"));
+        Set<Object> followerList = redisUtil.zRange("followers:" + String.valueOf(loginUserInfo.get("id")), 0, -1);
+        String sendMsg = "你关注的"+loginUserInfo.get("name")+"发布了【"+article.getTitle()+"】，快来看看吧";
+        WebSocketServer.groupSend2Client(followerList, WsResultResp.POP_UP(sendMsg));
     }
 
     public Article findById(BigInteger id) {

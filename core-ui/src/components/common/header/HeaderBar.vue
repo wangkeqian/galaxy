@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+    <el-menu :default-active="defaultActive" class="el-menu-demo" mode="horizontal" @select="handleSelect">
 
       <div>
         <span class='header-font'>Galaxy博客</span>
@@ -9,10 +9,29 @@
             <div class="block"><el-avatar :size="50" :src="circleUrlPhoto" ></el-avatar></div>
           </template>
           <div v-if="showUser">
-            <el-menu-item index="2-1" @click="goto('/index/profile?id='+userInfo.id)">个人中心</el-menu-item>
-            <el-menu-item index="2-2">我的关注</el-menu-item>
-            <el-menu-item index="2-3">我的回复</el-menu-item>
-            <el-menu-item index="2-4">退出登录</el-menu-item>
+            <el-menu-item index="2-1" @click="goto('/index/profile?id='+userInfo.id)">
+              <el-dropdown-item class="clearfix">
+                个人中心
+                <!-- <el-badge class="mark" :value="12" /> -->
+              </el-dropdown-item></el-menu-item>
+            <el-menu-item index="2-2">
+              <el-dropdown-item class="clearfix">
+                我的关注
+                <el-badge class="mark" :value="focusPoint" />
+              </el-dropdown-item>
+            </el-menu-item>
+            <el-menu-item index="2-3">
+              <el-dropdown-item class="clearfix">
+                我的回复
+                <el-badge class="mark" :value="ReplyPoint" />
+              </el-dropdown-item>
+            </el-menu-item>
+            <el-menu-item index="2-4">
+              <el-dropdown-item class="clearfix">
+                退出登录
+                
+              </el-dropdown-item>
+            </el-menu-item>
           </div>
           <div v-else>
             <el-menu-item index="2-1" @click="goto('/login')">登录</el-menu-item>
@@ -29,21 +48,18 @@
     name: 'HeaderBar',
     data() {
       return {
-        activeIndex: '1',
-        activeIndex2: '1',
-        //circleUrl: "http://112.74.161.190:80/group1/M00/00/00/rBIJrV_SRaaAAvS5AAIwONXIlTI877.png",
-        //https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png
+        defaultActive: '1',
         circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
-        squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
-        sizeList: ["large", "medium", "small"],
         showUser: false,
         userInfo:{},
-        socket: ''
+        websock: null,
+        focusPoint: '',
+        ReplyPoint: ''
       }
     },
     created() {
       this.getUser()
-      this.openWebsocket()
+      this.initWebSocket()
     },
     methods: {
       handleSelect(key, keyPath) {
@@ -75,42 +91,47 @@
         this.$router.push(url)
       },
       // - - - - - - - - - - - websoket - - - - - - - - - //
-      openWebsocket(){
-        if (typeof(WebSocket) == "undefined"){
-            console.log("您的浏览器不支持WebSocket");
-        }else {
-            let socket = this.socket
-            console.log("您的浏览器支持WebSocket");
-            const uid = sessionStorage.getItem('loginUserId')
-            var wsUrl = "ws://localhost:8090/ws/"+uid;
-            console.log('wsUrl='+wsUrl);
-            
-            if (socket != null){
-                socket.onclose;
-                socket = null;
-            }
-            socket = new WebSocket(wsUrl);
-            //打开事件
-            socket.onopen = this.onOpen();
-            socket.onmessage = this.onmessage()
-            socket.onclose = this.onclose()
-            socket.onerror = this.onerror()
+      initWebSocket(){ //初始化weosocket
+        const uid = sessionStorage.getItem('loginUserId')
+        //const wsuri = "ws://127.0.0.1:8090/ws/"+uid;
+        const wsuri = "ws://112.74.161.190:8090/ws/"+uid;
+        this.websock = new WebSocket(wsuri);
+        this.websock.onmessage = this.websocketonmessage;
+        this.websock.onopen = this.websocketonopen;
+        this.websock.onerror = this.websocketonerror;
+        this.websock.onclose = this.websocketclose;
+      },
+      websocketonopen(){ //连接建立之后执行send方法发送数据
+        let actions = {"test":"12345"};
+        this.websocketsend(JSON.stringify(actions));
+      },
+      websocketonerror(){//连接建立失败重连
+        this.initWebSocket();
+      },
+      websocketonmessage(e){ //数据接收
+        let data = JSON.parse(e.data)
+        if(data.status == 1){ //弹窗
+          this.focusPoint += 1
+          this.$notify.success({
+            title: data.title,
+            message: data.msg
+          });
+        }else if(data.status == 2){ //banner 
+          this.focusPoint += 1
+        }else{ //日志/控制台输出
+          console.log(data);
         }
+        
       },
-      onOpen(){
-        console.log("websocket 已开启")
+      websocketsend(Data){//数据发送
+        this.websock.send(Data);
       },
-      onmessage(msg){
-        let response = "服务器来信咯: ";
-        console.log(response);
-        console.log(msg)
+      websocketclose(e){  //关闭
+        console.log('断开连接',e);
       },
-      onclose(){
-        console.log("websocket 已关闭")
-      },
-      onerror(){
-        console.log("发生了错误")
-      }
+    },
+    destroyed() {
+      this.websock.close() //离开路由之后断开websocket连接
     },
     computed: {
       circleUrlPhoto(){

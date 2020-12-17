@@ -4,11 +4,21 @@
       <el-card  shadow="hover" v-for="item in list" >
         <div slot="header" class="clearfix">
           <span><a href="#" @click=showNote(item.id)>{{item.title}}</a></span>
-          <el-button style="float: right; padding: 3px 0" type="text" @click="wsBtn">操作按钮</el-button>
+          <el-button style="float: right; padding: 3px 0" type="text">收藏</el-button>
         </div>
         <div>
           <div class="tag">
-            <el-tag type="danger" size="mini" v-for=" tag in item.tag.split(',') ">{{tag}}</el-tag>
+            <el-tag :type="tagColor" size="mini" v-for=" tag in item.tag.split(',') "> {{tag}}  </el-tag> 
+            <a href="#" @click="intoUserProfile(item.creator)">
+              <el-tag
+              :key="item.id"
+              type="warning"
+              size="mini"
+              style="float: right;"
+              effect="plain">
+              作者：{{ item.author }}
+              </el-tag>
+            </a> 
           </div>
         </div>
         <div style="color: #999;">
@@ -54,8 +64,6 @@
     methods: {
       findNote(){
         homePageNote(this.currentPage).then(res =>{
-          console.log(res);
-          
           this.list = res.obj.list
         })
       },
@@ -83,24 +91,22 @@
         })
         window.open(routeUrl.href, '_blank')
       },
-      wsBtn(){
-        this.send('16',"你好 王克千")
-      },
-      send(uid,msg){
-        send(uid,msg).then(res =>{
-          console.log(res);    
+      intoUserProfile(uid){
+        const routeUrl = this.$router.resolve({
+          path: '/index/profile',
+          query: {id: uid}
         })
-      }
-      
+        window.open(routeUrl.href, '_blank')
+      },
     },
     mounted() {
       this.restaurants = this.loadAll();
     },
     computed: {
-      tags(data){
-        console.log(data);
-        
-        return "JJSS"
+      tagColor(){
+        let randomNum =Math.ceil(Math.random()*10)
+
+        return randomNum <= 3 ? 'success' : randomNum <=6 ? 'danger' : ''
       }
     },
     components: {}

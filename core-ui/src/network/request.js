@@ -12,8 +12,8 @@ export function request(config){
     router
   })
   const instance = axios.create({
-    //baseURL: 'http://112.74.161.190:8090/',
-    baseURL: 'http://localhost:8090/',
+    baseURL: 'http://112.74.161.190:8090/',
+    //baseURL: 'http://localhost:8090/',
     timeout: 5000
   })
   //1.请求拦截

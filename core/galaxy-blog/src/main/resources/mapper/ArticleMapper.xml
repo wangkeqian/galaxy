@@ -51,11 +51,6 @@
             <if test="params.title != null">
                 and title like concat(#{params.title},'%')
             </if>
-            <if test="params.followingList">
-                <foreach collection="params.followingList" item="item" index="index"  open="(" separator="or" close=")">
-                    u.id = '${item.id}'
-                </foreach>
-            </if>
         </where>
         order by gmt_create desc
     </select>

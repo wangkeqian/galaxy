@@ -1,6 +1,8 @@
 package com.galaxy.galaxyblog.controller;
 
 
+import com.galaxy.galaxyblog.common.HttpResultResp;
+import com.galaxy.galaxyblog.common.WsResultResp;
 import com.galaxy.galaxyblog.service.WebSocketServer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +22,8 @@ public class WebSocketApi {
 
 
     @GetMapping("/sendOne")
-    public String sendOne(@RequestParam(required = true) String uid,
+    public void sendOne(@RequestParam(required = true) String uid,
                           @RequestParam(required = true)String message){
-        WebSocketServer.sendInfo2Client(uid,message);
-        return "ok";
+        WebSocketServer.sendInfo2Client(uid, WsResultResp.QUIET(message));
     }
 }
