@@ -28,8 +28,4 @@ public class ArticleEditApi {
     public HttpResultResp delArticle(@PathVariable("id")Integer id){
         return HttpResultResp.ok(articleService.delById(id));
     }
-    @GetMapping("/refresh")
-    public HttpResultResp refresh(){
-        return HttpResultResp.ok(articleService.refresh());
-    }
 }

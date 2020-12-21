@@ -569,6 +569,27 @@ public final class RedisUtil {
     }
 
     /**
+     * 返回按分值排名范围内的有序集合成员，从大到小
+     * @param key
+     * @param start
+     * @param end
+     * @return
+     */
+    public Set<Object> zRevRange(String key, long start, long end){
+        return redisTemplate.opsForZSet().reverseRange(key, start, end);
+    }
+    /**
+     * 返回按分值排名范围内的有序集合成员和分值，从大到小
+     * @param key
+     * @param start
+     * @param end
+     * @return
+     */
+    public Set<ZSetOperations.TypedTuple<Object>> zRevRangeWithScores(String key, long start, long end){
+        return redisTemplate.opsForZSet().reverseRangeWithScores(key, start, end);
+    }
+
+    /**
      * 删除有序集合
      * @param key
      * @param item

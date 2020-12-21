@@ -75,3 +75,10 @@ export function delFile(filePath){
     data : filePath
   })
 }
+//获取热门排行榜
+export function hotRankingList(){
+  return request({
+    url: '/article/hotRankingList',
+    method: 'get',
+  })
+}

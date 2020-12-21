@@ -64,4 +64,11 @@ public class ArticleViewApi {
     public HttpResultResp homePageArticleQuery(Integer page){
         return HttpResultResp.ok(articleService.getHomePageArticle(page));
     }
+    /**
+     * 获取热门排行榜
+     */
+    @GetMapping("/hotRankingList")
+    public HttpResultResp hotRankingList(){
+        return HttpResultResp.ok(articleService.getHotRankingList());
+    }
 }

@@ -30,15 +30,15 @@
       <el-card  shadow="hover">
         <p>热门排行榜</p>
       </el-card>
-      <el-card  shadow="hover" v-for="item in list" >
-        <span><a href="#" @click=showNote(item.id)>{{item.title}}</a></span>
+      <el-card  shadow="hover" v-for="item in hotRankingList" >
+        <span><a href="#" @click=showNote(item.id)>{{item.title | titleSpliter}}</a></span>
       </el-card>
     </div>
   </div>
 </template>
 
 <script>
-  import {homePageNote, delNote} from '@/network/note'
+  import {homePageNote, delNote, hotRankingList} from '@/network/note'
   import { send } from '@/network/ws'
   export default {
     name: 'Home',
@@ -51,6 +51,7 @@
         state: '',
         timeout:  null,
         list: [],
+        hotRankingList:[],
         loadAll() {
         return [
           { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
@@ -60,11 +61,18 @@
     },
     created() {
       this.findNote()
+      this.findHotRankingList()
     },
     methods: {
       findNote(){
         homePageNote(this.currentPage).then(res =>{
           this.list = res.obj.list
+        })
+      },
+      findHotRankingList(){
+        hotRankingList().then(res =>{
+          this.hotRankingList = res.obj;
+          
         })
       },
       querySearchAsync(queryString, cb) {
@@ -121,11 +129,6 @@
     margin-left: 10%;
     float: left;
   }
-  .ranking-list{
-    float: left;
-    margin-left: 50px;
-
-  }
   .el-autocomplete{
     margin: 0, auto;
   }
@@ -133,6 +136,12 @@
     color: black;
     font-size: large;
     text-decoration: none
+  }
+  .ranking-list{
+    width: 200px;
+    float: left;
+    margin-left: 50px;
+
   }
   .ranking-list a{
     color: black;

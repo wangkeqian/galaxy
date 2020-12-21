@@ -26,10 +26,9 @@
                 <el-badge class="mark" :value="ReplyPoint" />
               </el-dropdown-item>
             </el-menu-item>
-            <el-menu-item index="2-4">
+            <el-menu-item index="2-4" @click='logout'>
               <el-dropdown-item class="clearfix">
                 退出登录
-                
               </el-dropdown-item>
             </el-menu-item>
           </div>
@@ -62,6 +61,12 @@
       this.initWebSocket()
     },
     methods: {
+      logout(){
+        sessionStorage.removeItem("loginUserId")
+        sessionStorage.removeItem("token")
+        this.websock.close() //离开路由之后断开websocket连接
+        this.$router.push('/login')
+      },
       handleSelect(key, keyPath) {
         console.log(key, keyPath);
       },
@@ -93,8 +98,8 @@
       // - - - - - - - - - - - websoket - - - - - - - - - //
       initWebSocket(){ //初始化weosocket
         const uid = sessionStorage.getItem('loginUserId')
-        //const wsuri = "ws://127.0.0.1:8090/ws/"+uid;
-        const wsuri = "ws://112.74.161.190:8090/ws/"+uid;
+        const wsuri = "ws://127.0.0.1:8090/ws/"+uid;
+        //const wsuri = "ws://112.74.161.190:8090/ws/"+uid;
         this.websock = new WebSocket(wsuri);
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;

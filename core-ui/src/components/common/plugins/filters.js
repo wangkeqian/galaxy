@@ -26,3 +26,9 @@ export function contextSpliter(str){
   }
   return str
 }
+export function titleSpliter(str){
+  if(typeof(str) == 'string' && str.length > 15 ){
+    str = str.substring(0,15) + '...'
+  }
+  return str
+}

@@ -16,6 +16,11 @@ spring:
         max-wait: -1
         max-active: 22
         min-idle: 0
+  rabbitmq:
+    host: 112.74.161.190
+    port: 5672
+    username: root
+    password: 123456
 fdfs:
   soTimeout: 2000 #socket连接超时时长
   connectTimeout: 600 #连接tracker服务器超时时长

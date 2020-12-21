@@ -81,4 +81,22 @@
         </where>
         order by gmt_create desc
     </select>
+    <select id="getHotRankingListByPvScores" resultType="com.galaxy.galaxyblog.model.Article">
+        select
+        id,
+        title
+        from article
+        <where>
+            <if test="ids">
+                <foreach collection="ids" item="id" index="index"  open="(" separator="or" close=")">
+                    id = '${id}'
+                </foreach>
+            </if>
+        </where>
+        order by field(
+        id,
+        <foreach collection="ids" item="id" index="index" open="" separator="," close="">
+            '${id}'
+        </foreach>)
+    </select>
 </mapper>

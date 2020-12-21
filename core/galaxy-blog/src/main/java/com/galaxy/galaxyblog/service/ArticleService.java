@@ -11,6 +11,7 @@ import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,17 +95,6 @@ public class ArticleService {
         return i;
     }
 
-    public String refresh() {
-        List<Article> articles = articleMapper.selectList(new QueryWrapper<>());
-        articles.stream().map((Function<Article, Object>) article -> {
-            if (article.getContent().length() >= 31){
-                article.setContent(article.getContent().substring(0,31));
-            }
-            return article;
-        });
-        System.out.println(articles);
-        return "";
-    }
 
     public String findByTitle(String key) {
 
@@ -135,5 +125,14 @@ public class ArticleService {
         String id = String.valueOf(loginUserInfo.get("id"));
         Set<Object> list = redisUtil.zRange("following:" + id, 0, -1);
         return list;
+    }
+
+    /**
+     * 取点击榜前十名
+     * @return
+     */
+    public List<Article> getHotRankingList() {
+        Set<Object> articlePV = redisUtil.zRevRange("articlePV", 0, 9);
+        return articleMapper.getHotRankingListByPvScores(articlePV);
     }
 }

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public interface ArticleMapper extends BaseMapper<Article> {
@@ -14,4 +15,6 @@ public interface ArticleMapper extends BaseMapper<Article> {
     List<Article> searchArticlePages(@Param("params") Article article);
     Article findArticleById(@Param("id") BigInteger id);
     List<Article> homePageArticle(@Param("params")Map params);
+
+    List<Article> getHotRankingListByPvScores(@Param("ids") Set<Object> ids);
 }
