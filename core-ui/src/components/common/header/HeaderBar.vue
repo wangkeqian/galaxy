@@ -98,8 +98,8 @@
       // - - - - - - - - - - - websoket - - - - - - - - - //
       initWebSocket(){ //初始化weosocket
         const uid = sessionStorage.getItem('loginUserId')
-        const wsuri = "ws://127.0.0.1:8090/ws/"+uid;
-        //const wsuri = "ws://112.74.161.190:8090/ws/"+uid;
+        //const wsuri = "ws://127.0.0.1:8090/ws/"+uid;
+        const wsuri = "ws://112.74.161.190:8090/ws/"+uid;
         this.websock = new WebSocket(wsuri);
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;

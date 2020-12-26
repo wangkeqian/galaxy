@@ -35,6 +35,39 @@
                        defaultOpen='preview'
                        :article='article'/>
     </div>
+    <div class = 'comment'>
+      <template>
+        <el-input
+        class="commentInput"
+        type="textarea"
+        :autosize="{ minRows: 2, maxRows: 4}"
+        placeholder="请输入你的评论吧"
+        v-model="comment">
+      </el-input>        
+      <el-button type="primary" class="submitCommentBtn" icon="el-icon-edit" @click="addLevel1Comment" circle></el-button>
+      </template>
+      <template>
+        <el-table
+        :data="commentData"
+        style="width: 100%;margin-bottom: 20px;"
+        :indent=30
+        row-key="id"
+        :show-header=false
+        border
+        default-expand-all
+        :tree-props="{children: 'childrenComment', hasChildren: 'hasChildren'}">
+        <el-table-column
+          prop="date"
+          label="日期"
+          sortable>
+          <template slot-scope="scope">
+            <el-avatar :size="25" :src="scope.row.headPhoto" ></el-avatar> 
+            {{scope.row.createName}} <span v-if="scope.row.replyCommentId != null"> <span style="color: #a5a5a5;">回复</span> {{scope.row.replyUsername}}:</span> <span else>: </span> {{scope.row.comment}}
+          </template>
+        </el-table-column>
+      </el-table>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -43,6 +76,7 @@
   import MarkdownPlugin from '@/components/common/plugins/MarkdownPlugin'
   import HeaderBar from '@/components/common/header/HeaderBar'
   import {findNoteById} from '@/network/note'
+  import {addComment,loadComment} from '@/network/comment'
 
   export default {
     name: 'ViewNote',
@@ -58,12 +92,14 @@
         subfield: false, // Markdown 编辑/阅览
         toolbarsFlag: false,
         editable: false,
-
+        comment: '',
+        commentData:[]
       }
     },
     methods: {
       init(id){
         this.findNoteById(id)
+        this.loadComment(id)
       },
       intoUserProfile(){
         const routeUrl = this.$router.resolve({
@@ -75,6 +111,37 @@
       findNoteById(id){
         findNoteById(id).then(res =>{
           this.article = res.obj
+          
+        })
+      },
+      addLevel1Comment(){
+        let comment = new Object
+        comment['articleId'] = this.article.id
+        comment['comment'] = this.comment
+        addComment(comment).then(res =>{
+          this.commentData.unshift(res.obj)
+          this.$message({
+            message: '评论成功',
+            type: 'success'
+          });
+        })
+      },
+      addLevel2Comment(replyCommentId,replyUserId,replyUsername){
+        let comment = new Object
+        comment['articleId'] = this.article.id
+        comment['comment'] = this.comment
+        comment['replyCommentId'] = replyCommentId
+        comment['replyUserId'] = replyUserId
+        comment['replyUsername'] = replyUsername
+        addComment(comment).then(res =>{
+          console.log(res);
+          
+        })
+      },
+      loadComment(id){
+        loadComment(id).then(res =>{
+          console.log(res);
+          this.commentData = res.obj
           
         })
       },
@@ -133,10 +200,15 @@
     vertical-align: bottom;
     float: right;
   }
-  .view-note{
+  .view-note {
     width: 70%;
     margin: auto;
     
+  }
+  .comment{
+    width: 70%;
+    margin: auto;
+    margin-top: 10px;
   }
   .edit-header{
     background-color: white;
@@ -153,5 +225,18 @@
     margin-top: 40px;
     font-size: 15px;
     color: gray;
+  }
+  el-avatar{
+    margin-top: 5px;
+  }
+  /deep/.cell .el-table__expand-icon--expanded{
+    display: none;
+  }
+  .commentInput{
+    width: 95%;
+  }
+  .submitCommentBtn{
+    float: right;
+    margin-top: 7px;
   }
 </style>

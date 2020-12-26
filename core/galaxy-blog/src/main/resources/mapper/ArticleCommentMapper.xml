@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.galaxyblog.mapper.ArticleCommentMapper" >
+    <resultMap id="commentMap" type="com.galaxy.galaxyblog.model.ArticleComment" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="comment" property="comment" jdbcType="VARCHAR" />
+        <result column="name" property="createName" jdbcType="VARCHAR" />
+        <result column="creator" property="creator" jdbcType="VARCHAR" />
+        <result column="headPhoto" property="headPhoto" jdbcType="VARCHAR" />
+        <collection property="childrenComment" ofType="com.galaxy.galaxyblog.model.ArticleComment">
+            <id column="childrenComment.id" property="id" jdbcType="INTEGER" />
+            <result column="childrenComment.creator" property="creator" jdbcType="VARCHAR" />
+            <result column="childrenComment.createName" property="createName" jdbcType="VARCHAR" />
+            <result column="childrenComment.headPhoto" property="headPhoto" jdbcType="VARCHAR" />
+            <result column="childrenComment.replyCommentId" property="replyCommentId" jdbcType="INTEGER" />
+            <result column="childrenComment.replyUserId" property="replyUserId" jdbcType="INTEGER" />
+            <result column="childrenComment.replyUsername" property="replyUsername" jdbcType="VARCHAR" />
+            <result column="childrenComment.comment" property="comment" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+    <select id="loadComment" resultMap="commentMap" parameterType="string">
+        select
+            level1comment.id,
+            level1comment.comment,
+            level1comment.name,
+            level1comment.creator,
+            level1comment.head_photo 'headPhoto',
+            level2comment.id as 'childrenComment.id',
+            level2comment.creator 'childrenComment.creator',
+            level2comment.head_photo 'childrenComment.headPhoto',
+            level2comment.reply_comment_id 'childrenComment.replyCommentId',
+            level2comment.reply_user_id 'childrenComment.replyUserId',
+            level2comment.reply_username 'childrenComment.replyUsername',
+            level2comment.name 'childrenComment.createName',
+            level2comment.comment 'childrenComment.comment'
+        from
+        (
+            select a.id,comment,a.creator,name,head_photo,a.gmt_create from article_comment a
+            left join sys_user u on a.creator = u.id
+            where article_id = #{articleId}
+        ) as level1comment
+        left join
+        (
+            select a.id,`reply_comment_id`,`reply_username`,`reply_user_id`,comment,a.creator,u.name,head_photo   from article_comment a
+            left join sys_user u on a.creator = u.id
+            where  reply_comment_id in (select reply_comment_id from article_comment where article_id = #{articleId})
+        )as level2comment on level1comment.id = level2comment.reply_comment_id
+        order by level1comment.gmt_create desc
+
+    </select>
+</mapper>
