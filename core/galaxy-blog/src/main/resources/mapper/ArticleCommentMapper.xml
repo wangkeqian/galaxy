@@ -37,7 +37,7 @@
         (
             select a.id,comment,a.creator,name,head_photo,a.gmt_create from article_comment a
             left join sys_user u on a.creator = u.id
-            where article_id = #{articleId}
+            where article_id = #{articleId} and reply_comment_id is null
         ) as level1comment
         left join
         (

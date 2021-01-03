@@ -44,7 +44,7 @@
         placeholder="请输入你的评论吧"
         v-model="comment">
       </el-input>        
-      <el-button type="primary" class="submitCommentBtn" icon="el-icon-edit" @click="addLevel1Comment" circle></el-button>
+      <el-button type="primary" class="submitCommentBtn" id='submitCommentBtn' icon="el-icon-edit" @click="addLevel1Comment" circle></el-button>
       </template>
       <template>
         <el-table
@@ -62,7 +62,8 @@
           sortable>
           <template slot-scope="scope">
             <el-avatar :size="25" :src="scope.row.headPhoto" ></el-avatar> 
-            {{scope.row.createName}} <span v-if="scope.row.replyCommentId != null"> <span style="color: #a5a5a5;">回复</span> {{scope.row.replyUsername}}:</span> <span else>: </span> {{scope.row.comment}}
+            {{scope.row.createName}} <span v-if="scope.row.replyCommentId != null"> <span style="color: #a5a5a5;">回复</span> {{scope.row.replyUsername}}</span> <span else>: </span> {{scope.row.comment}}
+            <el-button @click="preAddLevel2Comment(scope.row.replyCommentId != null? scope.row.replyCommentId:scope.row.id,scope.row.creator,scope.row.createName)" type="primary" icon="el-icon-bottom-right" size="mini" style="margin-left : 20px" >回复</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -93,7 +94,9 @@
         toolbarsFlag: false,
         editable: false,
         comment: '',
-        commentData:[]
+        commentData:[],
+        addCommentFunc: true, //true为一级评论，false为二级评论
+        selectedComment: {} 
       }
     },
     methods: {
@@ -115,26 +118,40 @@
         })
       },
       addLevel1Comment(){
+        if(!this.addCommentFunc){
+          this.addLevel2Comment();
+          return
+        }
         let comment = new Object
         comment['articleId'] = this.article.id
         comment['comment'] = this.comment
         addComment(comment).then(res =>{
           this.commentData.unshift(res.obj)
+          this.comment = ''
           this.$message({
             message: '评论成功',
             type: 'success'
           });
         })
       },
-      addLevel2Comment(replyCommentId,replyUserId,replyUsername){
-        let comment = new Object
+      preAddLevel2Comment(replyCommentId,replyUserId,replyUsername){
+        let selected = new Object()
+        selected['replyCommentId'] = replyCommentId
+        selected['replyUserId'] = replyUserId
+        selected['replyUsername'] = replyUsername
+        this.selectedComment = selected
+        const preComment = '@'+replyUsername+' :'
+        this.comment = preComment
+        this.addCommentFunc = false
+      },
+      addLevel2Comment(){
+        let comment = this.selectedComment
         comment['articleId'] = this.article.id
-        comment['comment'] = this.comment
-        comment['replyCommentId'] = replyCommentId
-        comment['replyUserId'] = replyUserId
-        comment['replyUsername'] = replyUsername
+        const preComment = '@'+comment['replyUsername']+' :'
+        comment['comment'] = this.comment.substring(preComment.length)
         addComment(comment).then(res =>{
-          console.log(res);
+          this.addCommentFunc = true
+          this.loadComment(this.article.id)
           
         })
       },
