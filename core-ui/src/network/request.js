@@ -33,7 +33,7 @@ export function request(config){
       });
       if(res.data.status == 9003 || res.data.status == 9002){
         setTimeout(() => {
-          vue.$router.push('/login')    
+          vue.$router.push('/blog')    
         }, 1000);
       
       }

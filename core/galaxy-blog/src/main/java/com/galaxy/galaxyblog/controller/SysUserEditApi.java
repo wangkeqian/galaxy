@@ -30,8 +30,8 @@ public class SysUserEditApi {
         return HttpResultResp.ok(sysUserService.register(user));
     }
     @GetMapping("/login")
-    public HttpResultResp login(String username, String password, HttpServletResponse response) throws Exception {
-        SysUserVo sysUser = sysUserService.loginAndVerify(username, password, response);
+    public HttpResultResp login(String username, String password) throws Exception {
+        SysUserVo sysUser = sysUserService.loginAndVerify(username, password);
         if (sysUser.getSysUser() == null) throw new MyException(ErrorExceptionEnum.USERNAME_PASSWORD_NOT_MATCH);
         return HttpResultResp.ok(sysUser);
     }

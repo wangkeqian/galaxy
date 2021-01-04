@@ -1,13 +1,13 @@
 import {request} from './request'
 //注册用户
-export function register(userInfo){
+export function signup(userInfo){
   return request({
     method: 'post',
     url: '/user/register',
     data: userInfo
   })
 }
-//校验用户
+//登录用户
 export function login(username,password){
   return request({
     method: 'get',

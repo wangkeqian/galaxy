@@ -38,7 +38,7 @@ public class SysUserService {
         return "注册成功";
     }
 
-    public SysUserVo loginAndVerify(String username, String password, HttpServletResponse response) {
+    public SysUserVo loginAndVerify(String username, String password) {
         SysUser sysUser = sysUserMapper.verifySysUser(username, password);
         String token = "";
         if (null != sysUser){

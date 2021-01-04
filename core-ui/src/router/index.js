@@ -9,9 +9,10 @@ const NoteList = () => import('@/views/note/NoteList')
 const IndexPage= () => import('@/views/IndexPage')
 const MindMapEdit = () => import('@/views/mindmap/MindMapEdit')
 const MindMapList = () => import('@/views/mindmap/MindMapList')
-const Login    = () => import('@/views/sys/Login')
 const Profile  = () => import('@/views/profile/Profile')
-
+const SignUp = () => import('@/views/sys/SignUp')
+const SignIn = () => import('@/views/sys/SignIn')
+const test = () => import('@/views/sys/LoginRegister')
 const routes = [
   {
     path: '',
@@ -62,8 +63,29 @@ const routes = [
     component: ViewNote
   },
   {
-    path: '/login',
-    component: Login
+    path: '/sign_up',
+    component: SignUp 
+  },
+  {
+    path: '/blog',
+    component: test ,
+    children: [
+      {
+        path: '',
+        redirect: 'sign_in',
+        meta: {
+          title: '登录'
+        }
+      },
+      {
+        path: 'sign_up',
+        component: SignUp
+      },
+      {
+        path: 'sign_in',
+        component: SignIn
+      },
+    ]
   }
 ]
 
