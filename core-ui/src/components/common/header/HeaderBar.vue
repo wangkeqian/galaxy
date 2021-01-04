@@ -65,7 +65,7 @@
         sessionStorage.removeItem("loginUserId")
         sessionStorage.removeItem("token")
         this.websock.close() //离开路由之后断开websocket连接
-        this.$router.push('/login')
+        this.$router.push('/blog')
       },
       handleSelect(key, keyPath) {
         console.log(key, keyPath);
