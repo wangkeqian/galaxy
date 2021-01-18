@@ -24,6 +24,9 @@
         <div style="color: #999;">
           <span style="font-size: 14px;">{{item.content | contextSpliter}}</span>
         </div>
+        <div class="pvrg">
+          <icon class='el-icon-thumb'></icon>: {{item.pageView}} <icon class='el-icon-medal'></icon>: {{item.articleGrade}}
+        </div>
       </el-card>
     </div>
     <div class="ranking-list">
@@ -150,5 +153,8 @@
   }
   a:hover{
     text-decoration:underline
+  }
+  .pvrg{
+    float: right;
   }
 </style>

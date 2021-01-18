@@ -82,3 +82,10 @@ export function hotRankingList(){
     method: 'get',
   })
 }
+//评分
+export function articleRate(id,rate){
+  return request({
+    url: '/article/rate/'+id+'/'+rate,
+    method: 'get',
+  })
+}

@@ -28,4 +28,8 @@ public class ArticleEditApi {
     public HttpResultResp delArticle(@PathVariable("id")Integer id){
         return HttpResultResp.ok(articleService.delById(id));
     }
+    @GetMapping("/rate/{id}/{rate}")
+    public HttpResultResp rate(@PathVariable("id") String id,@PathVariable Double rate){
+        return HttpResultResp.ok(articleService.rate(id,rate));
+    }
 }

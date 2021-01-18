@@ -25,7 +25,7 @@
         <el-row>
           <el-divider  content-position="right">
             <span style="color: gray;font-size:larger;"><a href="#" @click="intoUserProfile">{{creator}}</a> </span>
-            <span style="color: gray;"> {{gmtCreate}}</span>
+            <span style="color: gray;"> {{this.article.gmtCreate | dateFormat}}</span>
           </el-divider>
         </el-row>
       </div>
@@ -34,6 +34,15 @@
                        :editable='editable'
                        defaultOpen='preview'
                        :article='article'/>
+      <div class="rate">
+        <span class="demonstration">看完了打个评分吧</span>
+        <el-rate
+          v-model="article.articleGrade"
+          :colors="colors"
+          @change="rateChange"
+          show-text>
+        </el-rate>
+      </div>
     </div>
     <div class = 'comment'>
       <template>
@@ -76,7 +85,7 @@
 
   import MarkdownPlugin from '@/components/common/plugins/MarkdownPlugin'
   import HeaderBar from '@/components/common/header/HeaderBar'
-  import {findNoteById} from '@/network/note'
+  import {findNoteById,articleRate} from '@/network/note'
   import {addComment,loadComment} from '@/network/comment'
 
   export default {
@@ -87,7 +96,8 @@
           title: '',
           subtitle: '',
           tag: 'Java,Html,Python',
-          content: ''
+          content: '',
+          articleGrade: 0
         },
         id: '',
         subfield: false, // Markdown 编辑/阅览
@@ -96,7 +106,8 @@
         comment: '',
         commentData:[],
         addCommentFunc: true, //true为一级评论，false为二级评论
-        selectedComment: {} 
+        selectedComment: {},
+        colors: ['#99A9BF', '#F7BA2A', '#FF9900']
       }
     },
     methods: {
@@ -162,27 +173,23 @@
           
         })
       },
-      dateFormat(dateStr){
-        let df = new Date(dateStr);
-        let year = df.getFullYear();
-        let month = df.getMonth()+1;
-        let day = df.getDate();
-        let hours = df.getHours();
-        let minuter = df.getMinutes();
-        let second = df.getSeconds().toString().padStart(2,'0');
-        //return year+'-'+month+'-'+day;
-        return `${year}-${month}-${day}  ${hours}:${minuter}:${second}`;
-    }
+      rateChange(){
+        this.articleRate()
+      },  
+      articleRate(){
+        const id = this.article.id
+        articleRate(id,this.article.articleGrade).then(res =>{
+          console.log(res);
+          
+        })
+      }
     },
     computed: {
       //字符串转换为数组
       transformTag(){
         return this.article.tag.split(",")
       },
-      //格式化日期
-      gmtCreate(){
-        return this.dateFormat(this.article.gmtCreate)
-      },
+      
       creator(){
         return this.article.creator != null ? this.article.author:'佚名'
       }
@@ -255,5 +262,8 @@
   .submitCommentBtn{
     float: right;
     margin-top: 7px;
+  }
+  .rate{
+    margin-top: 20px;
   }
 </style>

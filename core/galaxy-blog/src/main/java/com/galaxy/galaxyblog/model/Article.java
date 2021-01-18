@@ -27,18 +27,6 @@ public class Article extends DataEntity {
      * 标签  用英文逗号分割
      */
     private String tag;
-    /**
-     * 访问量
-     */
-    private int pageView;
-    /**
-     * 点赞量
-     */
-    private int likeNum;
-    /**
-     * 反对量
-     */
-    private int againstNum;
 
     /**
      * --------------展示字段，非数据库字段------

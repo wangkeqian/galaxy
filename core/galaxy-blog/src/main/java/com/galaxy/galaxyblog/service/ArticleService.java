@@ -1,29 +1,22 @@
 package com.galaxy.galaxyblog.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.galaxy.galaxyblog.common.HttpResultResp;
 import com.galaxy.galaxyblog.common.WsResultResp;
 import com.galaxy.galaxyblog.common.utils.RedisUtil;
 import com.galaxy.galaxyblog.config.login.LoginIntercept;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
+import com.galaxy.galaxyblog.model.vo.ArticleVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.function.Function;
-
-import static org.springframework.data.redis.connection.DataType.ZSET;
 
 /**
  * TODO 请说明此类的作用
@@ -68,26 +61,50 @@ public class ArticleService {
     }
 
     public Article findById(BigInteger id) {
-        Map map = LoginIntercept.getLoginUserInfo();
-        Long articlePV = redisUtil.rank("articlePV", id);
-        if (articlePV == null){
-            redisUtil.zAdd("articlePV",id,1.0);
-        }else {
-            // 如果存在,则获取排序值  并且+1
-            Double score =redisUtil.score("articlePV", id);
-            redisUtil.zAdd("articlePV", id, score + 1);
-        }
-        return articleMapper.findArticleById(id);
+        return fill(articleMapper.findArticleById(id));
     }
     public Set<Object> hotSearch() {
         Set<Object> strSet = redisUtil.reverseRange("articlePV", 0, 10 - 1); //正确个数为下标-1
         return strSet;
     }
-    public PageInfo<Article> findByParams(Article article, Integer page, int size) {
+    public PageInfo<ArticleVo> findByParams(Article article, Integer page, int size) {
         PageHelper.startPage(page,size);
         List<Article> articles = articleMapper.searchArticlePages(article);
-        PageInfo<Article> pageInfo = new PageInfo<>(articles);
+        PageInfo<ArticleVo> pageInfo = new PageInfo<>(fill(articles));
         return pageInfo;
+    }
+    private ArticleVo fill(Article article){
+        ArticleVo articleVo = new ArticleVo();
+        BeanUtils.copyProperties(article,articleVo);
+        BigInteger id = article.getId();
+        //获取评分
+        Map<Object, Object> rateMap = redisUtil.hmget("article:grade:" + id);
+        //计算/获取访问量
+        Double pageView =redisUtil.score("articlePV", id);
+        if (pageView == null){
+            redisUtil.zAdd("articlePV",id,1.0);
+        }else {
+            // 如果存在,则获取排序值  并且+1
+            redisUtil.zAdd("articlePV", id, pageView + 1);
+        }
+        //获取收藏量 TODO
+
+        articleVo.setPageView(pageView);
+        if (0 != rateMap.size()){
+            articleVo.setArticleGrade((Double) rateMap.get("rate"));
+            articleVo.setArticleGradeNum((Integer) rateMap.get("rateNum"));
+        }else {
+            articleVo.setArticleGrade(0.0);
+            articleVo.setArticleGradeNum(1);
+        }
+        return articleVo;
+    }
+    private List<ArticleVo> fill(List<Article> articles) {
+        List<ArticleVo> articleVos = new ArrayList<>();
+        articles.forEach( e ->{
+            articleVos.add(fill(e));
+        });
+        return articleVos;
     }
 
     public int delById(Integer id) {
@@ -106,7 +123,7 @@ public class ArticleService {
      * 根据关注列表获取文章
      * @return
      */
-    public PageInfo<Article> getHomePageArticle(int page) {
+    public PageInfo<ArticleVo> getHomePageArticle(int page) {
         PageHelper.startPage(page,10);
         Map loginUserInfo = LoginIntercept.getLoginUserInfo();
         Set<Object> followingList = getFollowingList();
@@ -115,7 +132,7 @@ public class ArticleService {
         Map<String, Object> params = new HashMap<>();
         params.put("followingList",followingList);
         List<Article> articles = articleMapper.homePageArticle(params);
-        PageInfo<Article> pageInfo = new PageInfo<>(articles);
+        PageInfo<ArticleVo> pageInfo = new PageInfo<>(fill(articles));
         return pageInfo;
 
     }
@@ -134,5 +151,26 @@ public class ArticleService {
     public List<Article> getHotRankingList() {
         Set<Object> articlePV = redisUtil.zRevRange("articlePV", 0, 9);
         return articleMapper.getHotRankingListByPvScores(articlePV);
+    }
+
+    //评分
+    public synchronized Map rate(String id, Double rate) {
+        Map<Object, Object> rateMap = redisUtil.hmget("article:grade:" + id);
+        Map rateMap1 = new HashMap<>();
+        if (rateMap.size() == 0){
+            rateMap1.put("rateNum",1);
+            rateMap1.put("rate",rate);
+            redisUtil.hmset("article:grade:" + id,rateMap1);
+        }else {
+            // 如果存在,则获取排序值  并且计算平均数
+            Double rate1 = (Double) rateMap.get("rate");
+            Integer rateNum = (Integer) rateMap.get("rateNum");
+            rateNum ++;
+            rate =  (rate1 * (rateNum-1) + rate)/rateNum;
+            rateMap1.put("rateNum",rateNum);
+            rateMap1.put("rate",Double.valueOf(String.format("%.2f", rate)));
+            redisUtil.hmset("article:grade:" + id,rateMap1);
+        }
+        return rateMap1;
     }
 }
