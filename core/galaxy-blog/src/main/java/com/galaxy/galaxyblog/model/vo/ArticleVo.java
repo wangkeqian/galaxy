@@ -27,4 +27,8 @@ public class ArticleVo extends Article {
      * 收藏量
      */
     private int collectNum;
+    /**
+     * 是否收藏 0: 没收藏 1:已收藏
+     */
+    private int collectIs = 0;
 }

@@ -23,7 +23,7 @@
             <el-menu-item index="2-3">
               <el-dropdown-item class="clearfix">
                 我的回复
-                <el-badge class="mark" :value="ReplyPoint" />
+                <el-badge class="mark" :value="replyPoint" />
               </el-dropdown-item>
             </el-menu-item>
             <el-menu-item index="2-4" @click='logout'>
@@ -53,7 +53,7 @@
         userInfo:{},
         websock: null,
         focusPoint: '',
-        ReplyPoint: ''
+        replyPoint: ''
       }
     },
     created() {
@@ -98,8 +98,8 @@
       // - - - - - - - - - - - websoket - - - - - - - - - //
       initWebSocket(){ //初始化weosocket
         const uid = sessionStorage.getItem('loginUserId')
-        //const wsuri = "ws://127.0.0.1:8090/ws/"+uid;
-        const wsuri = "ws://112.74.161.190:8090/ws/"+uid;
+        const wsuri = "ws://127.0.0.1:8090/ws/"+uid;
+        //const wsuri = "ws://112.74.161.190:8090/ws/"+uid;
         this.websock = new WebSocket(wsuri);
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;
@@ -115,17 +115,22 @@
       },
       websocketonmessage(e){ //数据接收
         let data = JSON.parse(e.data)
+        console.log(data);
+        
         if(data.status == 1){ //弹窗
-          this.focusPoint += 1
           this.$notify.success({
             title: data.title,
             message: data.msg
           });
-        }else if(data.status == 2){ //banner 
-          this.focusPoint += 1
-        }else{ //日志/控制台输出
-          console.log(data);
         }
+        if(data.type == 1){ //我的回复 +1
+          const pointnum = this.replyPoint == '' ? 0:this.replyPoint
+          this.replyPoint  = parseInt(pointnum)+1
+        }else if(data.type == 2){ //我的关注 +1
+          const focus = this.focusPoint == '' ? 0:this.focusPoint
+          this.focusPoint  = parseInt(focus)+1
+        }
+        
         
       },
       websocketsend(Data){//数据发送

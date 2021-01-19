@@ -3,6 +3,7 @@ package com.galaxy.galaxyblog.model;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public class ArticleComment extends DataEntity{
     /**
      * 回复文章id
      */
-    private String articleId;
+    private BigInteger articleId;
     /**
      * 回复内容
      */

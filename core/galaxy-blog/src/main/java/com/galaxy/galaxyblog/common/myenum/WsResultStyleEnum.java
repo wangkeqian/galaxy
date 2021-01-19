@@ -1,18 +1,17 @@
 package com.galaxy.galaxyblog.common.myenum;
 
-/**
- * 推送类型
- */
-public enum WsResultTypeEnum {
-    MY_REPLY(1,"我的回复"),
-    MY_FOCUS(2,"我的关注");
-    WsResultTypeEnum(int code, String desc) {
+//推送样式
+public enum WsResultStyleEnum {
+    POP_UP(1,"弹窗消息"),
+    BANNER(2,"横幅消息/红点提示"),
+    QUIET(3,"静默消息");
+    private int code;
+    private String desc;
+
+    WsResultStyleEnum(int code, String desc) {
         this.code = code;
         this.desc = desc;
     }
-
-    private int code;
-    private String desc;
 
     public int getCode() {
         return code;

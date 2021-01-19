@@ -1,10 +1,13 @@
 <template>
   <div>
     <div class="box-card">
-      <el-card  shadow="hover" v-for="item in list" >
+      <el-card  shadow="hover" v-for="(item,index) in list" >
         <div slot="header" class="clearfix">
           <span><a href="#" @click=showNote(item.id)>{{item.title}}</a></span>
-          <el-button style="float: right; padding: 3px 0" type="text">收藏</el-button>
+          <el-button :ref="'article_'+index" style="float: right; padding: 3px 0" type="text" @click='collct(item,$event,index)' >
+            <span v-if="item.collectIs == 0">收藏</span>
+            <span v-else >已收藏</span>
+          </el-button>
         </div>
         <div>
           <div class="tag">
@@ -25,7 +28,11 @@
           <span style="font-size: 14px;">{{item.content | contextSpliter}}</span>
         </div>
         <div class="pvrg">
-          <icon class='el-icon-thumb'></icon>: {{item.pageView}} <icon class='el-icon-medal'></icon>: {{item.articleGrade}}
+          <icon class='el-icon-thumb'></icon>: {{item.pageView}}
+          <el-rate style="float: left;"
+          v-model="item.articleGrade"
+          :disabled=true>
+        </el-rate>
         </div>
       </el-card>
     </div>
@@ -41,7 +48,10 @@
 </template>
 
 <script>
-  import {homePageNote, delNote, hotRankingList} from '@/network/note'
+  import {homePageNote, 
+          delNote, 
+          hotRankingList,
+          articleCollect} from '@/network/note'
   import { send } from '@/network/ws'
   export default {
     name: 'Home',
@@ -55,6 +65,7 @@
         timeout:  null,
         list: [],
         hotRankingList:[],
+        isCollect: false,
         loadAll() {
         return [
           { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
@@ -109,6 +120,17 @@
         })
         window.open(routeUrl.href, '_blank')
       },
+      /**
+       * 收藏
+       */
+      collct(item,event,index){
+        articleCollect(item.id).then(res =>{
+          item.collectIs = !item.collectIs;
+          this.$message({
+            message: res.msg
+        });
+        })
+      }
     },
     mounted() {
       this.restaurants = this.loadAll();

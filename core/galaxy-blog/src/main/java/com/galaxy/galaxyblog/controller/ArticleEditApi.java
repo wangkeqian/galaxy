@@ -32,4 +32,8 @@ public class ArticleEditApi {
     public HttpResultResp rate(@PathVariable("id") String id,@PathVariable Double rate){
         return HttpResultResp.ok(articleService.rate(id,rate));
     }
+    @GetMapping("/collect/{id}")
+    public HttpResultResp collect(@PathVariable String id){
+        return HttpResultResp.ok(articleService.collect(id));
+    }
 }

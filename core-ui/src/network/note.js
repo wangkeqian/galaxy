@@ -89,3 +89,10 @@ export function articleRate(id,rate){
     method: 'get',
   })
 }
+//收藏
+export function articleCollect(articeId){
+  return request({
+    url: '/article/collect/'+articeId,
+    method: 'get',
+  })
+}

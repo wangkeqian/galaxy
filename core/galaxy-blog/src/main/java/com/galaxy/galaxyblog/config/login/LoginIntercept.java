@@ -58,5 +58,7 @@ public class LoginIntercept implements HandlerInterceptor {
     public static Map getLoginUserInfo(){
         return userInfo.get();
     }
-
+    public static String getLoginUserId(){
+        return String.valueOf(userInfo.get().get("id"));
+    }
 }

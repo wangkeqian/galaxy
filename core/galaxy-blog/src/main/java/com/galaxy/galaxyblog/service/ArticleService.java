@@ -1,6 +1,8 @@
 package com.galaxy.galaxyblog.service;
 
 import com.galaxy.galaxyblog.common.WsResultResp;
+import com.galaxy.galaxyblog.common.myenum.WsResultTypeEnum;
+import com.galaxy.galaxyblog.common.utils.CommonUtils;
 import com.galaxy.galaxyblog.common.utils.RedisUtil;
 import com.galaxy.galaxyblog.config.login.LoginIntercept;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
@@ -39,8 +41,6 @@ public class ArticleService {
 
 
     public void insertOrUpdate(Article article) {
-        ZoneOffset zoneOffset=ZoneOffset.ofHours(8);
-        LocalDateTime localDateTime=LocalDateTime.now();
         if (article.getId() != null) {
             redisUtil.hdel("articleSimpleInfo",String.valueOf(article.getId()));
             redisUtil.hset("articleSimpleInfo",String.valueOf(article.getId()),article);
@@ -50,18 +50,18 @@ public class ArticleService {
         Map loginUserInfo = LoginIntercept.getLoginUserInfo();
         article.setCreator(String.valueOf(loginUserInfo.get("id")));
         articleMapper.insert(article);
-        redisUtil.zAdd("articleByTime","article:"+String.valueOf(article.getId()),localDateTime.toEpochSecond(zoneOffset));
+        redisUtil.zAdd("articleByTime","article:"+String.valueOf(article.getId()), CommonUtils.getLocalTimestamp());
         /**
          * 群发推送
          */
         String id = String.valueOf(loginUserInfo.get("id"));
         Set<Object> followerList = redisUtil.zRange("followers:" + String.valueOf(loginUserInfo.get("id")), 0, -1);
         String sendMsg = "你关注的"+loginUserInfo.get("name")+"发布了【"+article.getTitle()+"】，快来看看吧";
-        WebSocketServer.groupSend2Client(followerList, WsResultResp.POP_UP(sendMsg));
+        WebSocketServer.groupSend2Client(followerList, WsResultResp.POP_UP(sendMsg, WsResultTypeEnum.MY_FOCUS));
     }
 
     public Article findById(BigInteger id) {
-        return fill(articleMapper.findArticleById(id));
+        return fill(articleMapper.findArticleById(id),true);
     }
     public Set<Object> hotSearch() {
         Set<Object> strSet = redisUtil.reverseRange("articlePV", 0, 10 - 1); //正确个数为下标-1
@@ -73,7 +73,14 @@ public class ArticleService {
         PageInfo<ArticleVo> pageInfo = new PageInfo<>(fill(articles));
         return pageInfo;
     }
-    private ArticleVo fill(Article article){
+
+    /**
+     * 填充属性
+     * @param article 文章
+     * @param single 是否点击量+1
+     * @return
+     */
+    private ArticleVo fill(Article article,Boolean single){
         ArticleVo articleVo = new ArticleVo();
         BeanUtils.copyProperties(article,articleVo);
         BigInteger id = article.getId();
@@ -83,11 +90,16 @@ public class ArticleService {
         Double pageView =redisUtil.score("articlePV", id);
         if (pageView == null){
             redisUtil.zAdd("articlePV",id,1.0);
-        }else {
-            // 如果存在,则获取排序值  并且+1
+        }else if(single) {
+            // 如果存在,并且single = true ,则获取排序值  并且+1
             redisUtil.zAdd("articlePV", id, pageView + 1);
         }
         //获取收藏量 TODO
+        Double score = redisUtil.score("article:collector:" + LoginIntercept.getLoginUserId(), String.valueOf(id));
+        if (score == null)
+            articleVo.setCollectIs(0);
+        else
+            articleVo.setCollectIs(1);
 
         articleVo.setPageView(pageView);
         if (0 != rateMap.size()){
@@ -102,7 +114,7 @@ public class ArticleService {
     private List<ArticleVo> fill(List<Article> articles) {
         List<ArticleVo> articleVos = new ArrayList<>();
         articles.forEach( e ->{
-            articleVos.add(fill(e));
+            articleVos.add(fill(e,false));
         });
         return articleVos;
     }
@@ -172,5 +184,16 @@ public class ArticleService {
             redisUtil.hmset("article:grade:" + id,rateMap1);
         }
         return rateMap1;
+    }
+
+    public String collect(String articleId) {
+        Double score = redisUtil.score("article:collector:" + LoginIntercept.getLoginUserId(), articleId);
+        if (null == score){
+            redisUtil.zAdd("article:collector:"+LoginIntercept.getLoginUserId(),articleId,CommonUtils.getLocalTimestamp());
+            return "已收藏";
+        }else {
+            redisUtil.zRem("article:collector:"+LoginIntercept.getLoginUserId(),articleId);
+            return "取消收藏";
+        }
     }
 }
