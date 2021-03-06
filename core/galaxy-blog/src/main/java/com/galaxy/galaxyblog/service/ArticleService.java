@@ -9,8 +9,6 @@ import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
 import com.galaxy.galaxyblog.model.ArticleWeightFactor;
 import com.galaxy.galaxyblog.model.vo.ArticleVo;
-import com.galaxy.galaxyblog.service.strategy.rankingList.ArticleWeightFactorStrategy;
-import com.galaxy.galaxyblog.service.strategy.rankingList.RankingListStrategy;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
