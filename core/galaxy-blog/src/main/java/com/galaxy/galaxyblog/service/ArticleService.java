@@ -58,7 +58,7 @@ public class ArticleService {
          */
         String id = String.valueOf(loginUserInfo.get("id"));
         Set<Object> followerList = redisUtil.zRange("followers:" + String.valueOf(loginUserInfo.get("id")), 0, -1);
-        String sendMsg = "你关注的"+loginUserInfo.get("name")+"发布了【"+article.getTitle()+"】，快来看看吧";
+        String sendMsg = "hello,你关注的"+loginUserInfo.get("name")+"发布了【"+article.getTitle()+"】，快来看看吧";
         WebSocketServer.groupSend2Client(followerList, WsResultResp.POP_UP(sendMsg, WsResultTypeEnum.MY_FOCUS));
     }
 
