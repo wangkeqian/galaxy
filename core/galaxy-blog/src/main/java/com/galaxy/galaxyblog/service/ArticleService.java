@@ -7,7 +7,6 @@ import com.galaxy.galaxyblog.common.utils.RedisUtil;
 import com.galaxy.galaxyblog.config.login.LoginIntercept;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
-import com.galaxy.galaxyblog.model.ArticleWeightFactor;
 import com.galaxy.galaxyblog.model.vo.ArticleVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
