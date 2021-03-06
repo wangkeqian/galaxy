@@ -7,7 +7,10 @@ import com.galaxy.galaxyblog.common.utils.RedisUtil;
 import com.galaxy.galaxyblog.config.login.LoginIntercept;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
+import com.galaxy.galaxyblog.model.ArticleWeightFactor;
 import com.galaxy.galaxyblog.model.vo.ArticleVo;
+import com.galaxy.galaxyblog.service.strategy.rankingList.ArticleWeightFactorStrategy;
+import com.galaxy.galaxyblog.service.strategy.rankingList.RankingListStrategy;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +22,7 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * TODO 请说明此类的作用
@@ -46,6 +50,7 @@ public class ArticleService {
             redisUtil.hset("articleSimpleInfo",String.valueOf(article.getId()),article);
             redisUtil.lSet("articleList",article);
             articleMapper.updateById(article);
+            return;
         }
         Map loginUserInfo = LoginIntercept.getLoginUserInfo();
         article.setCreator(String.valueOf(loginUserInfo.get("id")));
