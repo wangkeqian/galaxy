@@ -3,11 +3,16 @@ package com.galaxy.galaxyblog.service;
 import com.galaxy.galaxyblog.common.WsResultResp;
 import com.galaxy.galaxyblog.common.myenum.WsResultTypeEnum;
 import com.galaxy.galaxyblog.common.utils.CommonUtils;
+import com.galaxy.galaxyblog.common.utils.RedisCacheUtil;
 import com.galaxy.galaxyblog.common.utils.RedisUtil;
+import com.galaxy.galaxyblog.config.excep.MyException;
 import com.galaxy.galaxyblog.config.login.LoginIntercept;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
 import com.galaxy.galaxyblog.model.vo.ArticleVo;
+import com.galaxy.galaxyblog.service.strategy.StrategyDirector;
+import com.galaxy.galaxyblog.service.strategy.rankingList.ArticleTop10Strategy;
+import com.galaxy.galaxyblog.service.strategy.rankingList.ArticleWeightFactorStrategy;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +39,8 @@ public class ArticleService {
     private ArticleMapper articleMapper;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private ArticleTop10Strategy articleTop10Strategy;
 
     public List<Article> findAll(){
         return articleMapper.selectList(null);
@@ -162,9 +169,8 @@ public class ArticleService {
      * 取点击榜前十名
      * @return
      */
-    public List<Article> getHotRankingList() {
-        Set<Object> articlePV = redisUtil.zRevRange("articlePV", 0, 9);
-        return articleMapper.getHotRankingListByPvScores(articlePV);
+    public List<Article> getHotRankingList(){
+        return (List<Article>)StrategyDirector.getResult(articleTop10Strategy);
     }
 
     //评分
