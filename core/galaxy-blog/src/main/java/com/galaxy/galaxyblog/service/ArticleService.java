@@ -3,16 +3,13 @@ package com.galaxy.galaxyblog.service;
 import com.galaxy.galaxyblog.common.WsResultResp;
 import com.galaxy.galaxyblog.common.myenum.WsResultTypeEnum;
 import com.galaxy.galaxyblog.common.utils.CommonUtils;
-import com.galaxy.galaxyblog.common.utils.RedisCacheUtil;
 import com.galaxy.galaxyblog.common.utils.RedisUtil;
-import com.galaxy.galaxyblog.config.excep.MyException;
 import com.galaxy.galaxyblog.config.login.LoginIntercept;
 import com.galaxy.galaxyblog.mapper.ArticleMapper;
 import com.galaxy.galaxyblog.model.Article;
 import com.galaxy.galaxyblog.model.vo.ArticleVo;
 import com.galaxy.galaxyblog.service.strategy.StrategyDirector;
 import com.galaxy.galaxyblog.service.strategy.rankingList.ArticleTop10Strategy;
-import com.galaxy.galaxyblog.service.strategy.rankingList.ArticleWeightFactorStrategy;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
@@ -21,10 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * TODO 请说明此类的作用
@@ -76,10 +70,10 @@ public class ArticleService {
         Set<Object> strSet = redisUtil.reverseRange("articlePV", 0, 10 - 1); //正确个数为下标-1
         return strSet;
     }
-    public PageInfo<ArticleVo> findByParams(Article article, Integer page, int size) {
+    public PageInfo<Article> findByParams(Article article, Integer page, int size) {
         PageHelper.startPage(page,size);
         List<Article> articles = articleMapper.searchArticlePages(article);
-        PageInfo<ArticleVo> pageInfo = new PageInfo<>(fill(articles));
+        PageInfo<Article> pageInfo = new PageInfo<>(articles);
         return pageInfo;
     }
 
@@ -174,7 +168,7 @@ public class ArticleService {
     }
 
     //评分
-    public synchronized Map rate(String id, Double rate) {
+    public  Map rate(String id, Double rate) {
         Map<Object, Object> rateMap = redisUtil.hmget("article:grade:" + id);
         Map rateMap1 = new HashMap<>();
         if (rateMap.size() == 0){
